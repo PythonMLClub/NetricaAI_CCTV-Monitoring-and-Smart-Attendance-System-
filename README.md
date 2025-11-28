@@ -196,14 +196,6 @@ python cctv_app.py
 | GET    | /crowd-detection     | Crowd events                |
 | GET    | /attendance-summary  | Daily entry-exit summary    |
 
-## 🖼️ Screenshot Previews
-- **📍 Dashboard**: Overview of live streams and stats.
-- **🎥 Live Stream**: Annotated video feeds.
-- **👥 Crowd Detection**: ROI-based group tracking.
-- **🧍 Posture Detection**: Real-time classifications.
-- **🧑‍💼 Employee Registration**: Streamlit UI for enrollments.
-
-*(Add actual screenshot images here for better visuals, e.g., via GitHub uploads.)*
 
 ## 🚀 Future Enhancements
 - Auto Grouping & Crusher Operation.
@@ -227,15 +219,8 @@ python cctv_app.py
 - **AttendanceLogs**: EmployeeID, Timestamp, CameraID, Location, ConfidenceScore, Status (Entry/Exit/-), Description.
 - **CrowdDetection**: CrowdDetectionID (PK), CameraID, PeopleCount, DetectionTime, Duration, Posture, ImageEmbedding (VARBINARY).
 
-## 🤝 Contributing
-Contributions welcome! Fork the repo, create a branch, and submit a PR. For issues, open a ticket.
-
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🔗 Resources
 - [Project Flow SVG](https://github.com/PythonMLClub/NetricaAI_CCTV-Monitoring-and-Smart-Attendance-System-/blob/main/Netrica_flow_diagram.svg)
 - [GitHub Repo](https://github.com/PythonMLClub/NetricaAI_CCTV-Monitoring-and-Smart-Attendance-System-)
-- Prepared by: Dhanupriya A (Data Team)
 
-For questions, reach out via GitHub Issues. Let's make security smarter! 🚀
