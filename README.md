@@ -3,7 +3,7 @@
 
 ## NetricaAI is an advanced AI-driven CCTV Monitoring & Smart Attendance System built for enterprises, universities, and high-security environments It automates.
 
-### 📌 Overview
+## 📌 Overview
 
 NetricaAI is an advanced AI-powered CCTV Monitoring & Smart Attendance System designed to automate workforce attendance, enhance workplace security, and monitor environments in real time.
 
@@ -27,7 +27,7 @@ This system is ideal for corporate offices, universities, factories, and high-se
 
 The system uses Deep Learning + Computer Vision for intelligent, real-time understanding of CCTV feeds.
 
-### 🌟 1. Key Features
+## 🌟 1. Key Features
 
 ### 🔍 1.1 Real-Time Face Recognition
 
@@ -83,7 +83,7 @@ Auto-generate ArcFace embeddings
 
 Stores embedding + face image in SQL Server
 
-### 🏗️ 2. System Architecture
+## 🏗️ 2. System Architecture
 
 RTSP CCTV Cameras
         │
@@ -105,7 +105,7 @@ Identity Matching
         ├──▶ SQL Server (Employees, AttendanceLogs, CrowdLogs)
         └──▶ Live Stream Rendering (Flask)
 
-### 📂 3. Project Structure
+## 📂 3. Project Structure
 
 /NetricaAI
 │
@@ -126,9 +126,9 @@ Identity Matching
 ├── requirements.txt
 └── .env
 
-### ⚙️ 4. Installation Guide
+## ⚙️ 4. Installation Guide
 
-🟦 4.1 Clone the Repository
+### 🟦 4.1 Clone the Repository
 
 git clone https://github.com/YourRepo/NetricaAI.git
 
@@ -164,28 +164,24 @@ RTSP_PASSWORD=D@taMon1tor
 
 Download: https://ffmpeg.org/download.html
 
-Verify:
-
-ffmpeg -version
+Verify: ffmpeg -version
 
 ### 🟦 4.6 Run the Application
 
 python cctv_app.py
 
 
-### ➡️ Access UI at: http://127.0.0.1:5004/
+➡️ Access UI at: http://127.0.0.1:5004/
 
-### 🔌 5. API Endpoints
+## 🔌 5. API Endpoints
 
 ### 🎥 Camera Operations
 
-Method	Endpoint	Description
-
-POST	/api/start/<camera_id>	Start camera stream
-POST	/api/stop/<camera_id>	Stop camera stream
-POST	/api/start_all	Start all cameras
-POST	/api/stop_all	Stop all cameras
-GET	/api/status	Camera health
+POST - /api/start/<camera_id> - Start camera stream
+POST - /api/stop/<camera_id> - Stop camera stream
+POST - /api/start_all - Start all cameras
+POST - /api/stop_all - Stop all cameras
+GET - /api/status - Camera health
 
 ### 📸 Live Video Streaming
 
@@ -197,7 +193,7 @@ GET	/api/status	Camera health
 | GET | /crowd-detection | Crowd events |
 | GET | /attendance-summary | Daily entry–exit summary |
 
-### 🖼️ 6. Screenshot Previews
+## 🖼️ 6. Screenshot Previews
 
 📍 Dashboard
 🎥 Live Stream
@@ -205,7 +201,7 @@ GET	/api/status	Camera health
 🧍 Posture Detection
 🧑‍💼 Employee Registration
 
-### 🚀 7. Future Enhancements
+## 🚀 7. Future Enhancements
 
 ID Card Compliance Monitoring
 
@@ -219,6 +215,6 @@ Virtual Geofencing
 
 Enhanced Analytics Dashboard
 
-### Project Flow
+## Project Flow
 
-
+https://github.com/PythonMLClub/NetricaAI_CCTV-Monitoring-and-Smart-Attendance-System-/blob/main/Netrica_flow_diagram.svg
