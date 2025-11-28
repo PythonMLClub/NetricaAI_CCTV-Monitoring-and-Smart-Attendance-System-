@@ -9,11 +9,17 @@ NetricaAI is an advanced AI-powered CCTV Monitoring & Smart Attendance System de
 The platform combines Computer Vision, Deep Learning, FastAPI/Flask services, and SQL Server, enabling:
 
 ✔ Real-time facial recognition
+
 ✔ Automated Entry/Exit attendance
+
 ✔ Crowd monitoring
+
 ✔ Posture detection
+
 ✔ Live CCTV streaming
+
 ✔ Attendance & event dashboards
+
 ✔ Employee face registration via Streamlit
 
 This system is ideal for corporate offices, universities, factories, and high-security environments.
