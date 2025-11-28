@@ -9,9 +9,6 @@
   <img src="https://img.shields.io/github/forks/PythonMLClub/NetricaAI_CCTV-Monitoring-and-Smart-Attendance-System-?style=for-the-badge&logo=github" alt="GitHub Forks" />
 </p>
 
-<p align="center">
-  <img src="https://via.placeholder.com/800x400?text=NetricaAI+Demo+Image" alt="NetricaAI Banner" width="800" /> <!-- Replace with actual banner image URL if available -->
-</p>
 
 NetricaAI is an advanced **AI-driven CCTV Monitoring & Smart Attendance System** built for enterprises, universities, and high-security environments. It automates employee attendance, enhances security through real-time surveillance, and provides intelligent insights using live video feeds from IP/CCTV/RTSP cameras.
 
