@@ -28,6 +28,7 @@ This system is ideal for corporate offices, universities, factories, and high-se
 The system uses Deep Learning + Computer Vision for intelligent, real-time understanding of CCTV feeds.
 
 ### 🌟 1. Key Features
+
 ### 🔍 1.1 Real-Time Face Recognition
 
 YOLOv8 for precise face detection
@@ -126,25 +127,37 @@ Identity Matching
 └── .env
 
 ### ⚙️ 4. Installation Guide
+
 🟦 4.1 Clone the Repository
+
 git clone https://github.com/YourRepo/NetricaAI.git
+
 cd NetricaAI
 
 ### 🟦 4.2 Create Virtual Environment
+
 python -m venv env
+
 env\Scripts\activate
 
 ### 🟦 4.3 Install Dependencies
+
 pip install -r requirements.txt
 
 ### 🟦 4.4 Configure .env
+
 DB_DRIVER=ODBC Driver 18 for SQL Server
+
 DB_SERVER=xxx.xxx.xxx.xxx
+
 DB_NAME=NetricaAI
+
 DB_USERNAME=xxxx
+
 DB_PASSWORD=xxxx
 
 RTSP_USER=DataMonitor
+
 RTSP_PASSWORD=D@taMon1tor
 
 ### 🟦 4.5 Install FFmpeg
@@ -152,17 +165,22 @@ RTSP_PASSWORD=D@taMon1tor
 Download: https://ffmpeg.org/download.html
 
 Verify:
+
 ffmpeg -version
 
 ### 🟦 4.6 Run the Application
+
 python cctv_app.py
 
 
 ### ➡️ Access UI at: http://127.0.0.1:5004/
 
 ### 🔌 5. API Endpoints
+
 ### 🎥 Camera Operations
+
 Method	Endpoint	Description
+
 POST	/api/start/<camera_id>	Start camera stream
 POST	/api/stop/<camera_id>	Stop camera stream
 POST	/api/start_all	Start all cameras
@@ -200,3 +218,7 @@ Meal/Sleep Monitoring
 Virtual Geofencing
 
 Enhanced Analytics Dashboard
+
+### Project Flow
+
+
