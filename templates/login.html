@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Authentication</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* ────────────────────── BASIC LAYOUT ────────────────────── */
+  body{
+    margin:0;
+    font-family:"Segoe UI",sans-serif;
+    background:#e9edf5;          /* Light dashboard grey */
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .auth-card{
+    background:#ffffff;
+    padding:40px 35px;
+    border-radius:16px;
+    border:1px solid #d7dce5;    /* Soft card border like screenshot */
+    box-shadow:0 5px 12px rgba(0,0,0,.08);
+    width:380px;
+  }
+
+  h2{
+    text-align:center;
+    color:#354f8e;               /* Dashboard blue */
+    margin-bottom:25px;
+    font-weight:600;
+  }
+
+  .form-group{
+    margin-bottom:20px;
+    width:100%;
+  }
+
+  label{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+    color:#2e3b55;              /* Dark text like topbar */
+  }
+
+  input{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 12px;
+    border:1px solid #c8cede;   /* Light grey border */
+    border-radius:8px;
+    font-size:15px;
+    color:#333;
+    background:#f8f9fc;         /* Soft UI field background */
+  }
+
+  /* Login / Register Buttons */
+  button{
+    width:100%;
+    padding:12px;
+    background:#354f8e;         /* Primary dashboard blue */
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:10px;
+  }
+
+  button:hover{
+    background:#2e4378;
+  }
+
+  .links{
+    text-align:center;
+    margin-top:15px;
+    font-size:14px;
+  }
+
+  .links a{
+    color:#354f8e;              /* Dashboard blue */
+    text-decoration:none;
+    font-weight:500;
+    cursor:pointer;
+  }
+
+  /* ────────────────────── PASSWORD EYE ────────────────────── */
+  .password-wrapper{position:relative;}
+  .password-wrapper input{padding-right:40px;}
+  .eye-icon{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#666;
+    font-size:18px;
+  }
+
+  /* ────────────────────── FORM SWITCHING ────────────────────── */
+  .form-section{display:none;}
+  .form-section.active{
+    display:block;
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  /* ────────────────────── POPUP ────────────────────── */
+  .popup-overlay{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,.3);
+    backdrop-filter:blur(4px);
+    justify-content:center;
+    align-items:center;
+  }
+
+  .popup-box{
+    background:#fff;
+    border-radius:16px;
+    width:320px;
+    padding:25px 30px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+    animation:fadeIn .3s ease;
+    border:1px solid #d7dce5;
+  }
+
+  .popup-box h3{
+    color:#354f8e;             /* Dashboard blue */
+    margin-bottom:10px;
+  }
+
+  .popup-box p{
+    color:#333;
+    font-size:15px;
+    margin-bottom:20px;
+  }
+
+  .ok-btn{
+    background:#354f8e;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:10px 25px;
+    font-size:15px;
+    cursor:pointer;
+  }
+
+  .ok-btn:hover{
+    background:#2e4378;
+  }
+</style>
+
+</head>
+<body>
+
+  <div class="auth-card">
+
+    <!-- ==================== LOGIN ==================== -->
+    <div id="loginForm" class="form-section active">
+      <h2>Welcome Back</h2>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUsername" placeholder="Enter username"/>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="loginPassword" placeholder="Enter password"/>
+          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('loginPassword',this)"></i>
+        </div>
+      </div>
+
+      <button onclick="loginUser()">Login</button>
+
+      <div class="links"><a onclick="showForgot()">Forgot Password?</a></div>
+      <div class="links">New user? <a onclick="showRegister()">Register</a></div>
+    </div>
+
+    <!-- ==================== REGISTER ==================== -->
+    <div id="registerForm" class="form-section">
+      <h2>Create Account</h2>
+
+      <div class="form-group"><label>Username</label>
+        <input type="text" id="regUsername" placeholder="Enter username"/>
+      </div>
+
+      <div class="form-group"><label>Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="regPassword" placeholder="Enter password"/>
+          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('regPassword',this)"></i>
+        </div>
+      </div>
+
+      <div class="form-group"><label>Location</label>
+        <input type="text" id="regLocation" placeholder="Enter location"/>
+      </div>
+
+      <div class="form-group"><label>Module</label>
+        <input type="text" id="regModule" placeholder="Enter module"/>
+      </div>
+
+      <button onclick="registerUser()">Register</button>
+
+      <div class="links">Already have an account? <a onclick="showLogin()">Login</a></div>
+    </div>
+
+    <!-- ==================== FORGOT PASSWORD ==================== -->
+    <div id="forgotForm" class="form-section">
+      <h2>Reset Password</h2>
+
+      <div class="form-group"><label>Username</label>
+        <input type="text" id="forgotUsername" placeholder="Enter username"/>
+      </div>
+
+      <div class="form-group"><label>New Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="newPassword" placeholder="Enter new password"/>
+          <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('newPassword',this)"></i>
+        </div>
+      </div>
+
+      <button onclick="savePassword()">Save Password</button>
+
+      <div class="links"><a onclick="showLogin()">Back to Login</a></div>
+    </div>
+
+  </div>
+
+  <!-- ==================== POPUP ==================== -->
+  <div id="popupOverlay" class="popup-overlay">
+    <div class="popup-box">
+      <h3 id="popupTitle">Message</h3>
+      <p id="popupMessage"></p>
+      <div class="popup-buttons">
+        <button id="popupOk" class="ok-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ────────────────────── PASSWORD TOGGLE ────────────────────── */
+    function togglePassword(id, icon){
+      const input = document.getElementById(id);
+      if(input.type==="password"){
+        input.type="text";
+        icon.classList.replace("fa-eye","fa-eye-slash");
+      }else{
+        input.type="password";
+        icon.classList.replace("fa-eye-slash","fa-eye");
+      }
+    }
+
+    /* ────────────────────── FORM SWITCHING ────────────────────── */
+    function hideAll(){ document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active')); }
+    function showRegister(){ hideAll(); document.getElementById('registerForm').classList.add('active'); }
+    function showLogin(){    hideAll(); document.getElementById('loginForm').classList.add('active'); }
+    function showForgot(){   hideAll(); document.getElementById('forgotForm').classList.add('active'); }
+
+    /* ────────────────────── POPUP ────────────────────── */
+    function showPopup(message, title="Message"){
+      document.getElementById('popupTitle').textContent = title;
+      document.getElementById('popupMessage').textContent = message;
+      const ov = document.getElementById('popupOverlay');
+      ov.style.display = 'flex';
+      document.getElementById('popupOk').onclick = () => ov.style.display = 'none';
+    }
+
+    /* ────────────────────── LOGIN ────────────────────── */
+    async function loginUser(){
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      if(!username||!password) return showPopup('Please fill all fields','Warning');
+
+      try{
+        const r = await fetch('/login',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({username,password})
+        });
+        const d = await r.json();
+        if(d.status==='success' && d.redirect){
+          window.location.href = d.redirect;   // → /index
+        }else{
+          showPopup(d.message || 'Login failed','Error');
+        }
+      }catch(e){
+        showPopup('Network error','Error');
+      }
+    }
+
+    /* ────────────────────── REGISTER ────────────────────── */
+    async function registerUser(){
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const location = document.getElementById('regLocation').value.trim();
+      const module   = document.getElementById('regModule').value.trim();
+
+      if(!username||!password||!location||!module) return showPopup('Please fill all fields','Warning');
+
+      const r = await fetch('/register',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username,password,location,module})
+      });
+      const d = await r.json();
+      showPopup(d.message);
+      if(d.status==='success') showLogin();
+    }
+
+    /* ────────────────────── FORGOT PASSWORD ────────────────────── */
+    async function savePassword(){
+      const username = document.getElementById('forgotUsername').value.trim();
+      const new_password = document.getElementById('newPassword').value.trim();
+      if(!username||!new_password) return showPopup('Please fill all fields','Warning');
+
+      const r = await fetch('/forgot',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username, new_password})
+      });
+      const d = await r.json();
+      showPopup(d.message);
+      if(d.status==='success') showLogin();
+    }
+  </script>
+</body>
+</html>

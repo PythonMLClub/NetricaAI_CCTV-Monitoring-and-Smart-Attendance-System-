@@ -1,0 +1,333 @@
+body {
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+  background-color: #f0f3fd;
+}
+html {
+  scrollbar-gutter: stable;
+}
+
+html, body {
+  overflow-x: hidden; /* Prevent horizontal scroll on entire page */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.left-panel {
+  background-color: #111c43;
+  height: 96.5vh;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.fullscreen-video-wrapper {
+    position: relative;
+    overflow: hidden;
+    transform-origin: top left;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+#fullscreenCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+}
+.nav-menu li {
+  margin-bottom: 0.5rem;
+}
+
+/* Anchor (clickable link) base style */
+.nav-menu li a {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+}
+
+/* Icon inside anchor */
+.nav-menu li a i {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Active link */
+.nav-menu li a.active {
+  background-color: #e9ecef;
+  color: #111c43;
+  font-weight: 500;
+}
+.nav-menu li a.active i {
+  color: #111c43;
+}
+
+/* Hover (but not active) */
+/* .nav-menu li a:hover:not(.active) {
+  background-color: #e9ecef;
+  color: #111c43;
+  font-weight: 500;
+}
+.nav-menu li a:hover:not(.active) i {
+  color: #111c43;
+} */
+
+/* Hover (but not active) */
+.nav-menu li a:hover {
+  background-color: #e9ecef;
+  color: #111c43;
+  font-weight: 500;
+}
+.nav-menu li a:hover {
+  color: #111c43;
+}
+
+.top-bar {
+  height: 80px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+.input-width {
+  max-width: 20rem;
+}
+
+.top-bar h4 {
+  color: #111c43;
+  margin: 0;
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+}
+.admin-info .bi-bell {
+  font-size: 1.5rem;
+  color: #666;
+  margin-right: 10px;
+}
+.admin-info .admin-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+.admin-info .fw-bold {
+  font-weight: 600;
+  color: #333;
+}
+.admin-info .text-muted {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Sidebar menu scrollable container */
+#menus {
+  max-height: calc(100vh - 190px);
+  overflow-y: auto;
+  padding-right: 5px; /* Space for scrollbar */
+}
+
+/* Vertical scrollbar for sidebar menu */
+#menus::-webkit-scrollbar {
+  width: 6px;      /* Thin vertical scrollbar */
+  height: 6px;     /* Minimal horizontal scrollbar if any */
+}
+#menus::-webkit-scrollbar-track {
+  background: #111c43; /* Sidebar color */
+  border-radius: 3px;
+}
+#menus::-webkit-scrollbar-thumb {
+  background-color: #495057; /* Slightly lighter than sidebar */
+  border-radius: 3px;
+  min-height: 30px; /* Reduce length of the thumb */
+  border: none;
+}
+#menus::-webkit-scrollbar-thumb:hover {
+  background-color: #6c757d; /* Lighter on hover */
+}
+/* Remove scrollbar buttons */
+#menus::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* For Firefox */
+#menus {
+  scrollbar-width: thin;
+  scrollbar-color: #495057 #111c43;
+}
+
+/* Menu items styling */
+#menus .menu-item {
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+#menus .menu-item:hover {
+  background: #495057;
+}
+
+/* Remaining CSS unchanged from original file... */
+.cctv-feed {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  overflow: hidden;
+  padding: 0 15px;
+}
+.cctv-feed .placeholder-text {
+  position: absolute;
+  color: #6c757d;
+  font-size: 1rem;
+  text-align: center;
+  z-index: 1;
+}
+
+.cctv-live-feed {
+  background: #000;
+  height: 380px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+.tile {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.alert-stream {
+  height: 350px;
+  overflow-y: auto;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+}
+.camera-grid .cctv-box {
+  background: #000;
+  height: 200px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.card-one {
+  background-color: #e9f7f8;
+  border: 0;
+  border-top: 8px solid #5fccc8;
+}
+.card-two {
+  background-color: #fbe8ec;
+  border: 0;
+  border-top: 8px solid #e0b8c2;
+}
+.card-three {
+  background-color: #f6f5ea;
+  border: 0;
+  border-top: 8px solid #dcd9a9;
+}
+.card-four {
+  background-color: #f0f0f0;
+  border: 0;
+  border-top: 8px solid #757575;
+}
+.card-five {
+  background-color: #f2e8fb;
+  border: 0;
+  border-top: 8px solid #c1a3e8;
+}
+.card-six {
+  background-color: #e8f1fb;
+  border: 0;
+  border-top: 8px solid #8ab6e0;
+}
+
+.cctv-card {
+  overflow: hidden;
+}
+.fullscreen-btn {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cctv-card:hover .fullscreen-btn {
+  opacity: 1;
+}
+
+.menu-title {
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.table-responsive {
+  max-height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.table {
+  width: 100%;
+  table-layout: auto;
+}
+.main-content {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #d2dbe5 !important;
+  min-height: 30px;
+  padding: 5px 0;
+  margin: 0;
+  z-index: 1000;
+  text-align: center;
+}
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+}
+/* Adjust sidebar and main content to prevent overflow */
+.row {
+  overflow-x: hidden;
+}
+.col-lg-2 {
+  max-width: 16.666667%;
+  flex: 0 0 16.666667%;
+}
+.col-lg-10 {
+  max-width: 83.333333%;
+  flex: 0 0 83.333333%;
+}

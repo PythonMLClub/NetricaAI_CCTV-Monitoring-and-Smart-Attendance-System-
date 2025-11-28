@@ -1,0 +1,722 @@
+<!-- Save as employee_logs.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netrica</title>
+ 
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../static/img/favicon.ico" type="image/x-icon">
+ 
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="../static/css/style.css">
+ 
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+ 
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+ 
+  <!-- Inline Styles (Minimal & Responsive) -->
+  <style>
+    html, body, .container-fluid, .row { overflow-x: hidden; }
+   
+    .filter-col { flex: 1; max-width: 17%; margin: 0; }
+    .filter-buttons-col { flex: 1; max-width: 32%; margin: 0; }
+    .uniform-btn {
+      width: 100%;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      flex-grow: 1;
+    }
+    .table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto; /* allow horizontal scroll when needed */
+}
+
+/* hide horizontal scrollbar initially */
+.table-responsive::-webkit-scrollbar:horizontal {
+  display: none;
+}
+
+/* show horizontal scrollbar only when vertical scrollbar is visible or user interacts */
+.table-responsive:has(:hover, :focus-within, :active)::-webkit-scrollbar:horizontal,
+.table-responsive:has(> :not(:only-child))::-webkit-scrollbar:horizontal {
+  display: block;
+}
+
+    #entryExitTable th, #entryExitTable td {
+      white-space: nowrap;
+      padding: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .title-search-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 30px;
+      margin-bottom: 20px;
+      max-width: 1200px;
+      padding-left: 16px;
+    }
+    .search-bar { width: 50%; margin: 0 auto; }
+    .main-content {
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: 120px;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #d2dbe5 !important;
+      min-height: 30px;
+      padding: 5px 0;
+      margin: 0;
+      z-index: 1000;
+      text-align: center;
+    }
+    .footer p { font-size: 0.75rem; margin: 0; }
+    .pagination-container {
+      position: sticky;
+      bottom: 40px;
+      background: #fff;
+      padding: 10px;
+      z-index: 999;
+      border-top: 1px solid #dee2e6;
+    }
+    .pagination {
+      justify-content: center;
+      margin: 0;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .pagination .page-item {
+      margin: 0 2px;
+      flex: 0 0 auto;
+    }
+    .pagination .page-link {
+      border: none;
+      background: none;
+      color: #007bff;
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #007bff;
+      color: white;
+      border-radius: 3px;
+    }
+    .pagination .page-item.disabled .page-link {
+      color: #6c757d;
+      pointer-events: none;
+    }
+    .custom-pagination-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      font-size: 0.875rem;
+      color: #6c757d;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .custom-pagination-info select {
+      padding: 2px 5px;
+      font-size: 0.875rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+    }
+    .filter-buttons { display: flex; gap: 10px; }
+ 
+    @media (max-width: 576px) {
+      .pagination .page-link {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+      .custom-pagination-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .filter-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-buttons .btn {
+        width: 100%;
+      }
+      .main-content {
+        padding-bottom: 140px;
+      }
+      .pagination-container {
+        bottom: 50px;
+      }
+      .filter-col, .filter-buttons-col {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-lg-2 p-0 position-fixed top-0 start-0 vh-100">
+      <div class="left-panel p-3 text-white">
+        <img src="../static/img/logo.png" alt="logo" width="100" height="100" class="mx-auto d-block mb-4">
+        <div id="menus"></div>
+      </div>
+    </div>
+ 
+    <!-- Main Content -->
+    <div class="col-lg-10 offset-lg-2 main-content">
+      <!-- Dynamic Topbar -->
+      <div id="topbar-container"></div>
+ 
+      <!-- Search Bar -->
+      <div class="title-search-container">
+        <div class="search-bar">
+          <div class="input-group w-100 shadow-sm rounded">
+            <input type="text" class="form-control" id="empSearch" placeholder="Enter Emp ID or Name">
+            <button class="btn btn-primary" id="searchBtn">
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Two Panel Layout -->
+      <div class="row mb-4">
+        <!-- Left: CCTV + Alerts -->
+        <div class="col-lg-4 mb-3" id="leftPanel">
+          <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Employee Logs</span>
+            </div>
+            <div class="card-body text-center">
+              <div class="cctv-feed">
+                <span class="placeholder-text">[Employee Image Here]</span>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="card mt-4" id="alertStreamCard">
+            <div class="card-header">
+              Alert Stream
+            </div>
+            <div class="card-body alert-stream">
+              <div class="d-flex align-items-center mb-2 p-2 border rounded bg-light">
+                <i class="bi bi-shield-exclamation text-danger me-2 fs-5"></i>
+                <div class="flex-grow-1">Unauthorized Access - Camera 4</div>
+                <span<class="badge bg-danger">High</span>
+              </div>
+              <div class="d-flex align-items-center mb-2 p-2 border rounded bg-light">
+                <i class="bi bi-exclamation-circle text-warning me-2 fs-5"></i>
+                <div class="flex-grow-1">Multiple People Detected - Conf Room A</div>
+                <span class="badge bg-warning text-dark">Medium</span>
+              </div>
+              <div class="d-flex align-items-center mb-2 p-2 border rounded bg-light">
+                <i class="bi bi-info-circle text-primary me-2 fs-5"></i>
+                <div class="flex-grow-1">Camera 2 - Connection Restored</div>
+                <span class="badge bg-info text-dark">Low</span>
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Right: Table + Filters -->
+        <div class="col-lg-8 mb-3">
+          <div class="card shadow-sm" id="tableCard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">Entry/Exit Log</h6>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-sm btn-outline-primary uniform-btn" id="todayFilter">Today</button>
+                <button class="btn btn-outline-primary btn-sm uniform-btn" type="button" data-bs-toggle="dropdown">
+                  Download
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" id="downloadCsv">CSV</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadExcel">Excel</a></li>
+                </ul>
+              </div>
+            </div>
+ 
+            <div class="card-body">
+              <!-- Filters -->
+              <form class="row g-2 mb-5 align-items-end" id="filterForm">
+                <div class="col filter-col">
+                  <label for="filterEvent" class="form-label small fw-bold">Event Type</label>
+                  <select id="filterEvent" class="form-select form-select-sm">
+                    <option value="">All Event Types</option>
+                  </select>
+                </div>
+                <div class="col filter-col">
+                  <label for="filterLocation" class="form-label small fw-bold">Location</label>
+                  <select id="filterLocation" class="form-select form-select-sm">
+                    <option value="">All Locations</option>
+                  </select>
+                </div>
+                <div class="col filter-col">
+                  <label for="startDateFilter" class="form-label small fw-bold">From</label>
+                  <input type="date" class="form-control form-control-sm" id="startDateFilter">
+                </div>
+                <div class="col filter-col">
+                  <label for="endDateFilter" class="form-label small fw-bold">To</label>
+                  <input type="date" class="form-control form-control-sm" id="endDateFilter">
+                </div>
+                <div class="col filter-buttons-col">
+                  <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary btn-sm uniform-btn">
+                      Apply
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm uniform-btn" id="clearFilters">
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </form>
+ 
+              <!-- Table -->
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover mb-0" id="entryExitTable">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Employee ID</th>
+                      <th>Name</th>
+                       <th>Camera ID</th>
+                       <th>Description</th>
+                      <th>Event Type</th>
+                      <th>Location</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="entryExitBody">
+                    <tr><td colspan="7" class="text-center">No data found</td></tr>
+                  </tbody>
+                </table>
+              </div>
+ 
+              <!-- Pagination Info -->
+              <div class="custom-pagination-info" style="display: none;">
+                <span id="paginationInfo">Showing 1 - 10 of 0</span>
+                <div>
+                  <span>Rows per page:</span>
+                  <select id="rowsPerPage">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="all">All</option>
+                  </select>
+                </div>
+              </div>
+ 
+              <!-- Pagination -->
+              <div class="pagination-container" style="display: none;">
+                <nav id="pagination">
+                  <ul class="pagination">
+                    <!-- will be populated dynamically -->
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Error Modal -->
+      <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h5 id="errorTitle" class="mb-1"></h5>
+              <p id="errorMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer justify-content-center border-0 pt-0">
+              <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Footer -->
+      <div class="footer text-center">
+        <hr class="border border-gray m-0">
+        <p class="text-muted small">TatvaOne.AI © 2025. All rights reserved</p>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Scripts (All at the end) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="../static/js/loadLayouts.js"></script>
+ 
+<script>
+  // --- Globals ---
+  let allData = [];        // full data fetched from server (chunks)
+  let filteredData = [];   // after applying filters (and removing invalid EventType)
+  let currentPage = 1;
+  let currentBlockIndex = 0;
+  let rowsPerPage = 10;
+
+  // invalid eventtype values to omit
+  const INVALID_EVENT_VALUES = new Set(['', null, 'null', 'N/A', 'NA', '-', '_']);
+
+  function isInvalidEvent(val) {
+    if (val === undefined || val === null) return true;
+    const s = String(val).trim();
+    return s === '' || INVALID_EVENT_VALUES.has(s);
+  }
+
+  function showErrorModal(title, message) {
+    document.getElementById('errorTitle').textContent = title;
+    document.getElementById('errorMessage').textContent = message;
+    const modal = new bootstrap.Modal(document.getElementById('errorModal'));
+    modal.show();
+  }
+
+  function showLoading() {
+    document.getElementById('entryExitBody').innerHTML =
+      '<tr><td colspan="7" class="text-center py-4 text-dark">Loading data, please wait...</td></tr>';
+    document.querySelector('.custom-pagination-info').style.display = 'none';
+    document.querySelector('.pagination-container').style.display = 'none';
+  }
+
+  function showNoData() {
+    document.getElementById('entryExitBody').innerHTML =
+      '<tr><td colspan="7" class="text-center text-dark">No data found</td></tr>';
+    document.querySelector('.custom-pagination-info').style.display = 'none';
+    document.querySelector('.pagination-container').style.display = 'none';
+  }
+
+  // --- Chunked fetch from API ---
+  async function fetchLogsFromAPI(params = {}) {
+    const results = [];
+    let page = 1;
+    const per_page = 50;
+    let hasMore = true;
+
+    try {
+      while (hasMore) {
+        const url = new URL('https://t1-exam.temscbe.com:5004/api/logs');
+        url.searchParams.set('page', page);
+        url.searchParams.set('per_page', per_page);
+        // pass employee_id if provided
+        if (params.employee_id) url.searchParams.set('employee_id', params.employee_id);
+        if (params.camera) url.searchParams.set('camera', params.camera);
+        if (params.from_date) url.searchParams.set('from_date', params.from_date);
+        if (params.to_date) url.searchParams.set('to_date', params.to_date);
+
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('Server error ' + resp.status);
+        const json = await resp.json();
+        const chunk = Array.isArray(json.results) ? json.results : (json.data || []);
+        // push chunk
+        results.push(...chunk);
+
+        // break when fewer than per_page returned
+        if (chunk.length < per_page) hasMore = false;
+        else page++;
+      }
+      return results;
+    } catch (err) {
+      console.error('fetchLogsFromAPI error', err);
+      showErrorModal('Fetch Error', 'Unable to fetch logs from server.');
+      return [];
+    }
+  }
+
+  // --- Utility: chunk array into pages ---
+  function chunkArray(arr, size) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+  }
+
+  // --- Populate Event/Location dropdowns from the dataset (excluding invalids) ---
+  function populateDropdownsFromData(data) {
+    const events = [...new Set(data.map(d => (d.EventType ?? '').toString().trim()).filter(v => v && !INVALID_EVENT_VALUES.has(v)))];
+    const locs = [...new Set(data.map(d => (d.Location ?? '').toString().trim()).filter(v => v))];
+
+    const evSel = document.getElementById('filterEvent');
+    const locSel = document.getElementById('filterLocation');
+
+    evSel.innerHTML = '<option value="">All Event Types</option>' + events.map(e => `<option value="${e}">${e}</option>`).join('');
+    locSel.innerHTML = '<option value="">All Locations</option>' + locs.map(l => `<option value="${l}">${l}</option>`).join('');
+  }
+
+  // --- Render table with pagination (client-side) ---
+  function renderTable(data) {
+  const tbody = document.getElementById('entryExitBody');
+  const feed = document.querySelector('.cctv-feed');
+  tbody.innerHTML = '';
+
+  const rpVal = document.getElementById('rowsPerPage').value;
+  const showAll = rpVal === 'all';
+  const rows = showAll ? (data.length || 1) : parseInt(rpVal, 10);
+
+  const pages = chunkArray(data, rows);
+  const totalPages = pages.length || 1;
+
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const currentChunk = showAll ? data : (pages[currentPage - 1] || []);
+
+  // --- Handle No Data Case ---
+  if (!currentChunk.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No records found</td></tr>';
+    // Reset CCTV feed image
+    feed.innerHTML = '<span class="placeholder-text">[Employee Image Here]</span>';
+  } else {
+    // Render rows
+    tbody.innerHTML = currentChunk.map(d => `
+      <tr>
+        <td>${d.EmployeeID ?? 'N/A'}</td>
+        <td>${d.Name ?? 'N/A'}</td>
+        <td>${d.CameraID ?? 'N/A'}</td>
+        <td>${d.Description ?? 'N/A'}</td>
+        <td>${d.EventType ?? 'N/A'}</td>
+        <td>${d.Location ?? 'N/A'}</td>
+        <td>${d.Timestamp ?? 'N/A'}</td>
+      </tr>
+    `).join('');
+
+    // Update CCTV feed only if currentChunk has valid image
+    if (currentChunk[0].face_image) {
+      feed.innerHTML = `<img src="data:image/jpeg;base64,${currentChunk[0].face_image}" style="width:100%;height:100%;object-fit:contain;">`;
+    } else {
+      feed.innerHTML = '<span class="placeholder-text">[Employee Image Here]</span>';
+    }
+  }
+
+  // Pagination info + visibility
+  const totalItems = data.length;
+  if (showAll) {
+    document.querySelector('.custom-pagination-info').style.display = totalItems ? 'flex' : 'none';
+    document.getElementById('paginationInfo').textContent = totalItems ? `Showing 1 - ${totalItems} of ${totalItems}` : '';
+    document.querySelector('.pagination-container').style.display = 'none';
+  } else {
+    const startItem = (currentPage - 1) * rows + 1;
+    const endItem = Math.min(currentPage * rows, totalItems);
+    document.querySelector('.custom-pagination-info').style.display = totalItems ? 'flex' : 'none';
+    document.getElementById('paginationInfo').textContent = totalItems ? `Showing ${startItem} - ${endItem} of ${totalItems}` : '';
+    document.querySelector('.pagination-container').style.display = totalItems > rows ? 'block' : 'none';
+    updatePagination(totalPages);
+  }
+}
+
+
+  // --- Pagination UI (block pages, Prev/Next, '...') ---
+  function updatePagination(totalPages) {
+    const ul = document.querySelector('#pagination ul');
+    ul.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    const blockSize = 5;
+    const lastBlockStart = Math.max(1, totalPages - blockSize + 1);
+    const startPage = currentBlockIndex * blockSize + 1;
+    const endPage = Math.min(startPage + blockSize - 1, totalPages);
+
+    // Prev
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+    prevLi.onclick = (e) => {
+      e.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        if (currentPage < startPage) currentBlockIndex = Math.floor((currentPage - 1) / blockSize);
+        renderTable(filteredData);
+      }
+    };
+    ul.appendChild(prevLi);
+
+    const pagesArr = [];
+    if (totalPages <= blockSize) {
+      for (let i = 1; i <= totalPages; i++) pagesArr.push(i);
+    } else {
+      if (startPage > 1) pagesArr.push('...');
+      for (let i = startPage; i <= endPage; i++) pagesArr.push(i);
+      if (endPage < lastBlockStart - 1) pagesArr.push('...');
+      if (endPage < lastBlockStart) {
+        for (let i = lastBlockStart; i <= totalPages; i++) pagesArr.push(i);
+      }
+    }
+
+    pagesArr.forEach(p => {
+      if (p === '...') {
+        const li = document.createElement('li');
+        li.className = 'page-item disabled';
+        li.innerHTML = `<span class="page-link">...</span>`;
+        ul.appendChild(li);
+      } else {
+        const li = document.createElement('li');
+        li.className = `page-item ${p === currentPage ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" href="#" data-page="${p}">${p}</a>`;
+        li.onclick = (e) => {
+          e.preventDefault();
+          const pageNum = p;
+          if (pageNum !== currentPage) {
+            if (pageNum % blockSize === 0 && pageNum < lastBlockStart) {
+              currentBlockIndex = Math.floor((pageNum - 1) / blockSize);
+            }
+            currentPage = pageNum;
+            renderTable(filteredData);
+          }
+        };
+        ul.appendChild(li);
+      }
+    });
+
+    // Next
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+    nextLi.onclick = (e) => {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        if (currentPage > endPage && (currentBlockIndex + 1) * blockSize < totalPages) currentBlockIndex++;
+        renderTable(filteredData);
+      }
+    };
+    ul.appendChild(nextLi);
+  }
+
+  // --- Apply filters (AND logic for fields that are filled) ---
+  async function applyFilters() {
+    const empSearch = document.getElementById('empSearch').value.trim();
+    const eventType = document.getElementById('filterEvent').value;
+    const location = document.getElementById('filterLocation').value;
+    const from = document.getElementById('startDateFilter').value;
+    const to = document.getElementById('endDateFilter').value;
+
+    if (from && to && new Date(from) > new Date(to)) {
+      return showErrorModal('Invalid Date', '"From" cannot be after "To".');
+    }
+
+    showLoading();
+
+    // fetch all matching records from API (we still pass empSearch to API when provided)
+    const apiParams = {
+      employee_id: empSearch || undefined,
+      from_date: from || undefined,
+      to_date: to || undefined
+    };
+    // Note: API supports camera param; your UI uses Location. We'll do more client-side filtering for EventType and Location.
+    const fetched = await fetchLogsFromAPI(apiParams);
+    allData = fetched || [];
+
+    // Build filteredData from allData with:
+    // - remove invalid EventType values
+    // - apply AND filtering for the fields that are provided
+    filteredData = allData.filter(rec => {
+      // exclude invalid EventType rows
+      if (isInvalidEvent(rec.EventType)) return false;
+
+      // EventType filter
+      if (eventType && String((rec.EventType ?? '')).trim() !== String(eventType).trim()) return false;
+      // Location filter
+      if (location && String((rec.Location ?? '')).trim() !== String(location).trim()) return false;
+      // Employee search (if provided) - match id or name substring
+      if (empSearch) {
+        const idMatch = String(rec.EmployeeID ?? '').toLowerCase().includes(empSearch.toLowerCase());
+        const nameMatch = String(rec.Name ?? '').toLowerCase().includes(empSearch.toLowerCase());
+        if (!idMatch && !nameMatch) return false;
+      }
+      // Date range filter - use date part of Timestamp if available
+      if (from || to) {
+        const datePart = (rec.Timestamp || '').split(' ')[0];
+        if (datePart) {
+          if (from && new Date(datePart) < new Date(from)) return false;
+          if (to && new Date(datePart) > new Date(to)) return false;
+        }
+      }
+      return true;
+    });
+
+    // populate dropdowns from fetched data (so dropdowns reflect dataset)
+    populateDropdownsFromData(allData);
+
+    // reset pagination
+    currentPage = 1;
+    currentBlockIndex = 0;
+    // ensure rowsPerPage variable follows DOM
+    rowsPerPage = document.getElementById('rowsPerPage').value === 'all' ? filteredData.length || 1 : parseInt(document.getElementById('rowsPerPage').value, 10);
+    renderTable(filteredData);
+  }
+
+  // --- Event bindings ---
+  document.getElementById('filterForm').onsubmit = (e) => { e.preventDefault(); applyFilters(); };
+  document.getElementById('searchBtn').onclick = (e) => { e.preventDefault(); applyFilters(); };
+
+  document.getElementById('todayFilter').onclick = () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDateFilter').value = today;
+    document.getElementById('endDateFilter').value = today;
+    applyFilters();
+  };
+
+  document.getElementById('clearFilters').onclick = () => {
+    document.getElementById('filterForm').reset();
+    document.getElementById('empSearch').value = '';
+    allData = [];
+    filteredData = [];
+    currentPage = 1;
+    currentBlockIndex = 0;
+    document.querySelector('.cctv-feed').innerHTML = '<span class="placeholder-text">[Employee Image Here]</span>';
+    showNoData();
+  };
+
+  // rows per page behavior (10,20,30,all)
+  document.getElementById('rowsPerPage').addEventListener('change', (e) => {
+    const v = e.target.value;
+    // if all -> hide pagination container (will be handled by renderTable)
+    currentPage = 1;
+    currentBlockIndex = 0;
+    renderTable(filteredData);
+  });
+
+  // Downloads: use filteredData
+  document.getElementById('downloadCsv').onclick = () => {
+    if (!filteredData.length) return showErrorModal('No Data', 'Nothing to download.');
+    const rows = [['Employee ID','Name','Camera ID','Description','Event Type','Location','Timestamp']];
+    filteredData.forEach(d => rows.push([d.EmployeeID, d.Name, d.CameraID, d.Description, d.EventType, d.Location, d.Timestamp]));
+    const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(r => r.map(c => `"${String(c || '').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a'); a.href = encodeURI(csvContent); a.download = 'employee_logs.csv'; a.click();
+  };
+
+  document.getElementById('downloadExcel').onclick = () => {
+    if (!filteredData.length) return showErrorModal('No Data', 'Nothing to download.');
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['Employee ID','Name','Camera ID','Description','Event Type','Location','Timestamp'],
+      ...filteredData.map(d => [d.EmployeeID, d.Name, d.CameraID, d.Description, d.EventType, d.Location, d.Timestamp])
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Employee Logs');
+    XLSX.writeFile(wb, 'employee_logs.xlsx');
+  };
+
+  // initial state
+  showNoData();
+</script>
+
+</body>
+</html>

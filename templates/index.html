@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netrica</title>
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../static/img/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="../static/css/style.css">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    .main-content { 
+      position: relative; 
+      min-height: 100vh; 
+      padding-bottom: 80px; 
+    }
+    .content-wrapper { 
+      margin-top: 20px; 
+    }
+
+    /* === SUMMARY + CONTROLS CONTAINER === */
+    .summary-controls-container {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+
+    /* Camera Info Cards (Left) */
+    .camera-info-card {
+     background-color: #ccd1d5;
+    border: 1px solid #979797;
+    border-radius: 12px;
+    text-align: center;
+    padding: 16px;
+    box-shadow: 0px 0px 5px 3px rgb(81 76 76 / 12%);
+    transition: all 0.3s ease;
+    height: 100%;
+    }
+    .camera-info-card:hover {
+      transform: scale(1.03);
+      background-color: #a4aaaf;
+    }
+    .camera-info-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #312e2e;
+      margin-bottom: 4px;
+    }
+    .camera-info-label {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Module Controls (Right) */
+    .module-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .module-controls label {
+      font-weight: 500;
+      color: #333;
+      margin: 0;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .module-controls select {
+      min-width: 140px;
+      border: 1px solid #0d6efd;
+      font-size: 0.875rem;
+      border-radius: 4px;
+    }
+    .module-controls .btn {
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .module-controls .btn-start-all { background-color: #28a745; color: white; }
+    .module-controls .btn-stop-all { background-color: #dc3545; color: white; }
+    .module-controls .btn-refresh-all { background-color: #6c757d; color: white; }
+
+    .module-controls .btn-start-all:hover { background-color: #218838; opacity: 0.9; }
+    .module-controls .btn-stop-all:hover { background-color: #c82333; opacity: 0.9; }
+    .module-controls .btn-refresh-all:hover { background-color: #5a6268; opacity: 0.9; }
+
+    /* === CAMERA FEEDS CONTAINER === */
+    .module-container {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .camera-feed-container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .camera-header .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .camera-header .location {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #6c757d;
+      font-size: 0.875rem;
+      font-weight: 400;
+      margin-top: 4px;
+    }
+    .status-badge {
+      background-color: #dc3545;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 400;
+    }
+    .camera-body {
+      background-color: #000;
+      color: #6c757d;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      min-height: 250px;
+    }
+    .camera-footer {
+      background-color: #f8f9fa;
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-top: 1px solid #dee2e6;
+    }
+    .camera-footer button {
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .camera-footer .btn-start { background-color: #28a745; }
+    .camera-footer .btn-stop { background-color: #dc3545; }
+    .camera-footer .btn-fullscreen { background-color: #0d6efd; }
+    .camera-footer .btn-draw { background-color: #ffc107; color: #000; }
+    .camera-footer .btn-reset { background-color: #343a40; }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #d2dbe5 !important;
+      min-height: 30px;
+      padding: 5px 0;
+      margin: 0;
+      z-index: 1000;
+      text-align: center;
+      
+    }
+    .footer p {
+      font-size: 0.75rem;
+      margin: 0;
+    }
+
+    /* //camera grid css */
+    .cameras-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+      background: #e0e1e3;
+      border: 1px solid #adb5bd;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .camera-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .camera-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+
+    .camera-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-bottom: 1px dotted #adb5bd;
+    }
+
+    .camera-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #003087;
+    }
+
+    .camera-status {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+
+    .status-running { background: #d4edda; color: #155724; }
+    .status-stopped { background: #f8d7da; color: #721c24; }
+    .status-loading { background: #fff3cd; color: #856404; }
+
+    .camera-location {
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .roi-instructions{
+      font-size: 0.9rem;
+      padding: 6px 0px;
+      color: #0a7543;
+    }
+
+    .video-container {
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+      min-height: 42vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-container canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      cursor: crosshair;
+      z-index: 10;
+    }
+
+    .video-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .video-placeholder {
+      color: #888;
+      font-size: 1.1em;
+    }
+
+    .roi-info {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.85em;
+      color: #333;
+      margin-bottom: 10px;
+      display: none;
+    }
+    .roi-info.active { display: block; }
+
+    .camera-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* >>> Windowed Viewer styles */
+    .fullscreen-modal {
+      position: fixed;
+      display: none;
+      z-index: 1200;
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .fullscreen-modal.active { display: block; }
+
+    .fullscreen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 10px 14px;
+    }
+    .fullscreen-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #003087;
+    }
+    .fullscreen-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fullscreen-controls .btn-close-fullscreen {
+      border: 1px solid #ced4da;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .zoom-control {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.85rem;
+    }
+    .fullscreen-content {
+      background: #000;
+      position: relative;
+      height: calc(100% - 56px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fullscreen-video-wrapper {
+      position: relative;
+      transform-origin: center center;
+      will-change: transform;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .fullscreen-video-wrapper img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    #fullscreenCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      cursor: crosshair;
+    }
+    .fullscreen-roi-info {
+      position: absolute;
+      top: 10px; left: 10px;
+      z-index: 20;
+      background: rgba(255,255,255,0.85);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #333;
+      display: none;
+    }
+    .fullscreen-roi-info.active { display: block; }
+
+    /* Simple toast */
+    .notification {
+      position: fixed;
+      right: 16px;
+      bottom: 86px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #fff;
+      z-index: 1400;
+      font-size: 0.9rem;
+    }
+    .notification-info { background: #0d6efd; }
+    .notification-success { background: #28a745; }
+    .notification-error { background: #dc3545; }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Left Panel -->
+    <div class="col-lg-2 p-0 position-fixed top-0 start-0 vh-100">
+      <div class="left-panel p-3 text-white">
+        <img src="../static/img/logo.png" alt="TatvaOne.AI Logo" width="100" height="100" class="mx-auto d-block mb-4">
+        <div id="menus"></div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-10 offset-lg-2 main-content" id="mainContent">
+      <!-- Dynamic Topbar -->
+      <div id="topbar-container"></div>
+
+      <div class="content-wrapper">
+
+        <!-- === SUMMARY + CONTROLS CONTAINER === -->
+        <div class="summary-controls-container">
+          <div class="row align-items-center g-4">
+            <!-- Left: Active & Total Cameras -->
+            <div class="col-lg-6">
+              <div class="row g-3">
+                <div class="col-6 mb-1">
+                  <div class="camera-info-card">
+                    <div class="camera-info-value" id="activeCameras">12</div>
+                    <div class="camera-info-label">Active Cameras</div>
+                  </div>
+                </div>
+                <div class="col-6 mb-1">
+                  <div class="camera-info-card">
+                    <div class="camera-info-value" id="totalCameras">14</div>
+                    <div class="camera-info-label">Total Cameras</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Select Module + Buttons -->
+            <div class="col-lg-6">
+              <div class="module-controls">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="moduleSelect">Select Module:</label>
+                  <select id="moduleSelect" class="form-select w-auto me-3">
+                    <option value="Module 1">Module 1</option>
+                    <option value="Module 3" selected>Module 3</option>
+                  </select>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn btn-success"  onclick="startAll()">Start All</button>
+                  <button type="button" class="btn btn-danger" onclick="stopAll()">Stop All</button>
+                  <button type="button" class="btn btn btn-light border border-dark" onclick="refreshStatus()"><i class="bi bi-arrow-clockwise"></i> Refresh All</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- === CAMERA FEEDS CONTAINER === -->
+        <div class="cameras-grid" id="camerasGrid">
+          <!-- Camera cards will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viewer -->
+  <div class="fullscreen-modal" id="fullscreenModal" aria-hidden="true">
+    <div class="fullscreen-header">
+      <div class="fullscreen-title" id="fullscreenTitle">Camera View</div>
+      <div class="fullscreen-controls">
+        <div class="zoom-control">
+          <label for="zoomSlider" class="me-1">Zoom:</label>
+          <input type="range" id="zoomSlider" min="50" max="200" value="100" step="10">
+          <span class="zoom-value" id="zoomValue">100%</span>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm d-flex align-items-center px-3" onclick="closeFullscreen()">
+          <i class="bi bi-x-circle-fill me-2"></i> close
+        </button>
+      </div>
+    </div>
+    <div class="fullscreen-content">
+      <div class="fullscreen-video-wrapper" id="fullscreenVideoWrapper">
+        <div class="fullscreen-roi-info" id="fullscreenRoiInfo"></div>
+        <img id="fullscreenImage" alt="Fullscreen view" />
+        <canvas id="fullscreenCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p class="text-dark">Netrica.ai © 2025. All rights reserved</p>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../static/js/loadLayouts.js"></script>
+
+<script>
+  async function loadTopbar() {
+    try {
+      const response = await fetch('/templates/topbar.html');
+      if (!response.ok) throw new Error('Failed to load topbar.html');
+      const topbarContent = await response.text();
+      document.getElementById('topbar-container').innerHTML = topbarContent;
+    } catch (err) {
+      console.error('Error loading topbar:', err);
+      document.getElementById('topbar-container').innerHTML = '<div class="text-danger mx-3">Error loading topbar</div>';
+    }
+  }
+
+  function splitCameraFeeds() {
+    const container = document.getElementById('cameraFeedsContainer');
+    if (!container) return;
+    const cameraCards = Array.from(container.children);
+    cameraCards.forEach(card => {
+      card.className = 'col-lg-6 col-xl-6 h-100';
+    });
+  }
+
+  loadTopbar();
+  document.addEventListener('DOMContentLoaded', splitCameraFeeds);
+</script>
+
+<script>
+  let currentModule = 'Module 3';
+  let cameraConfigs = {};
+  let statusInterval = null;
+  let roiDrawers = {};
+  let currentFullscreenCamera = null;
+
+  /* ROI persistence helpers (unchanged behavior) */
+  function saveROI(cameraId, roi) {
+    if (!roi) return;
+    try { localStorage.setItem(`roi_${cameraId}`, JSON.stringify(roi)); } catch(e) {}
+  }
+  function getStoredROI(cameraId) {
+    try {
+      const raw = localStorage.getItem(`roi_${cameraId}`);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+  function clearStoredROI(cameraId) {
+    try {
+      localStorage.removeItem(`roi_${cameraId}`);
+      localStorage.removeItem(`roi_${cameraId}_fullscreen`);
+    } catch(e) {}
+  }
+  function drawStoredROI(cameraId) {
+    const roi = getStoredROI(cameraId);
+    if (!roi) return;
+
+    const drawer = roiDrawers[cameraId];
+    const canvas = document.getElementById(`canvas-${cameraId}`);
+    if (!drawer || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(roi.x1, roi.y1, roi.x2 - roi.x1, roi.y2 - roi.y1);
+
+    drawer.roi = roi;
+
+    const roiInfo = document.getElementById(`roi-info-${cameraId}`);
+    if (roiInfo) {
+      roiInfo.textContent = `ROI: (${roi.x1}, ${roi.y1}) → (${roi.x2}, ${roi.y2})`;
+      roiInfo.classList.add('active');
+    }
+  }
+  function drawStoredROIFullscreen(cameraId) {
+    const roi = getStoredROI(cameraId);
+    if (!roi) return;
+
+    const fullscreenCanvas = document.getElementById('fullscreenCanvas');
+    if (!fullscreenCanvas) return;
+
+    const ctx = fullscreenCanvas.getContext('2d');
+    ctx.clearRect(0, 0, fullscreenCanvas.width, fullscreenCanvas.height);
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(roi.x1, roi.y1, roi.x2 - roi.x1, roi.y2 - roi.y1);
+
+    if (roiDrawers[`${cameraId}_fullscreen`]) {
+      roiDrawers[`${cameraId}_fullscreen`].roi = roi;
+    }
+
+    const roiInfo = document.getElementById('fullscreenRoiInfo');
+    roiInfo.textContent = `ROI: (${roi.x1}, ${roi.y1}) → (${roi.x2}, ${roi.y2})`;
+    roiInfo.classList.add('active');
+  }
+
+  class ROIDrawer {
+    constructor(cameraId, canvasId, imgId) {
+      this.cameraId = cameraId;
+      this.canvas = document.getElementById(canvasId);
+      this.img = document.getElementById(imgId);
+      this.ctx = this.canvas.getContext('2d');
+      this.isDrawing = false;
+      this.startX = 0;
+      this.startY = 0;
+      this.currentX = 0;
+      this.currentY = 0;
+      this.roi = null;
+      this.drawingMode = false;
+
+      this.canvas.addEventListener('mousedown', this.startDrawing.bind(this));
+      this.canvas.addEventListener('mousemove', this.draw.bind(this));
+      this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+      this.canvas.addEventListener('mouseleave', this.stopDrawing.bind(this));
+    }
+
+    enableDrawing() {
+      this.drawingMode = true;
+      this.canvas.style.display = 'block';
+      const container = this.canvas.parentElement;
+      container.classList.add('drawing-mode');
+      
+      if (!this.cameraId.includes('fullscreen')) {
+        const el = document.getElementById(`roi-instructions-${this.cameraId}`);
+        if (el) el.classList.add('active');
+      }
+      showNotification('Click and drag to draw ROI', 'info');
+    }
+
+    disableDrawing() {
+      this.drawingMode = false;
+      const container = this.canvas.parentElement;
+      container.classList.remove('drawing-mode');
+      
+      if (!this.cameraId.includes('fullscreen')) {
+        const el = document.getElementById(`roi-instructions-${this.cameraId}`);
+        if (el) el.classList.remove('active');
+      }
+    }
+
+    getMousePos(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+
+    startDrawing(e) {
+      if (!this.drawingMode) return;
+      this.isDrawing = true;
+      const pos = this.getMousePos(e);
+      this.startX = pos.x;
+      this.startY = pos.y;
+    }
+
+    draw(e) {
+      if (!this.isDrawing || !this.drawingMode) return;
+      const pos = this.getMousePos(e);
+      this.currentX = pos.x;
+      this.currentY = pos.y;
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      this.ctx.strokeStyle = '#00ffff';
+      this.ctx.lineWidth = 3;
+      this.ctx.strokeRect(
+        this.startX,
+        this.startY,
+        this.currentX - this.startX,
+        this.currentY - this.startY
+      );
+
+      this.ctx.fillStyle = '#00ffff';
+      this.ctx.font = '14px Arial';
+      this.ctx.fillText(
+        `(${Math.round(this.startX)}, ${Math.round(this.startY)})`,
+        this.startX,
+        this.startY - 5
+      );
+      this.ctx.fillText(
+        `(${Math.round(this.currentX)}, ${Math.round(this.currentY)})`,
+        this.currentX,
+        this.currentY + 15
+      );
+    }
+
+    stopDrawing(e) {
+      if (!this.isDrawing || !this.drawingMode) return;
+      this.isDrawing = false;
+
+      const x1 = Math.min(this.startX, this.currentX);
+      const y1 = Math.min(this.startY, this.currentY);
+      const x2 = Math.max(this.startX, this.currentX);
+      const y2 = Math.max(this.startY, this.currentY);
+
+      if (x2 - x1 > 10 && y2 - y1 > 10) {
+        this.roi = {
+          x1: Math.round(x1),
+          y1: Math.round(y1),
+          x2: Math.round(x2),
+          y2: Math.round(y2)
+        };
+
+        this.ctx.strokeStyle = '#00ff00';
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+
+        const realCameraId = this.cameraId.replace('_fullscreen', '');
+        
+        if (this.cameraId.includes('fullscreen')) {
+          const roiInfo = document.getElementById('fullscreenRoiInfo');
+          roiInfo.textContent = `ROI: (${this.roi.x1}, ${this.roi.y1}) → (${this.roi.x2}, ${this.roi.y2})`;
+          roiInfo.classList.add('active');
+        } else {
+          const roiInfo = document.getElementById(`roi-info-${this.cameraId}`);
+          if (roiInfo) {
+            roiInfo.textContent = `ROI: (${this.roi.x1}, ${this.roi.y1}) → (${this.roi.x2}, ${this.roi.y2})`;
+            roiInfo.classList.add('active');
+          }
+        }
+
+        saveROI(realCameraId, this.roi);
+        this.sendROI(realCameraId);
+      }
+
+      this.disableDrawing();
+    }
+
+    async sendROI(cameraId) {
+      if (!this.roi) return;
+
+      try {
+        const response = await fetch(`/api/set_roi/${cameraId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.roi)
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          showNotification(`ROI set for ${cameraId}: (${this.roi.x1}, ${this.roi.y1}) → (${this.roi.x2}, ${this.roi.y2})`, 'success');
+        } else {
+          showNotification(`Failed to set ROI: ${result.message}`, 'error');
+        }
+      } catch (error) {
+        showNotification('Error setting ROI', 'error');
+        console.error(error);
+      }
+    }
+
+    clearROI() {
+      this.roi = null;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      if (this.cameraId.includes('fullscreen')) {
+        const roiInfo = document.getElementById('fullscreenRoiInfo');
+        roiInfo.classList.remove('active');
+      } else {
+        const roiInfo = document.getElementById(`roi-info-${this.cameraId}`);
+        if (roiInfo) roiInfo.classList.remove('active');
+      }
+      this.disableDrawing();
+    }
+  }
+
+  async function loadCameras() {
+    try {
+      const response = await fetch('/api/cameras');
+      cameraConfigs = await response.json();
+      updateCameraGrid();
+      startStatusPolling();
+    } catch (error) {
+      showNotification('Failed to load cameras', 'error');
+      console.error(error);
+    }
+  }
+
+  function updateCameraGrid() {
+    const grid = document.getElementById('camerasGrid');
+    const cameras = cameraConfigs[currentModule] || [];
+
+    Array.from(grid.children).forEach(card => {
+      const cameraId = card.id.replace('camera-', '');
+      if (!cameras.some(c => c.id === cameraId)) {
+        if (cameraStates[cameraId] && cameraStates[cameraId].running) {
+          card.style.display = 'none';
+        } else {
+          card.remove();
+        }
+      }
+    });
+
+    cameras.forEach(camera => {
+      let card = document.getElementById(`camera-${camera.id}`);
+      if (!card) {
+        card = createCameraCard(camera);
+        grid.appendChild(card);
+      } else {
+        card.style.display = 'block';
+      }
+
+      if (cameraStates[camera.id] && cameraStates[camera.id].running) {
+        updateCameraStatus(camera.id, 'running', 'Running');
+        startVideoFeed(camera.id);
+      } else {
+        updateCameraStatus(camera.id, 'stopped', 'Stopped');
+        stopVideoFeed(camera.id);
+      }
+    });
+
+    document.getElementById('totalCameras').textContent = cameras.length;
+    let activeCount = Object.values(cameraStates).filter(state => state.running).length;
+    document.getElementById('activeCameras').textContent = activeCount;
+  }
+
+  function createCameraCard(camera) {
+    const card = document.createElement('div');
+    card.className = 'camera-card';
+    card.id = `camera-${camera.id}`;
+    
+    const location = camera.id.includes('M1') ? 'Module 1' : camera.id.includes('M3') ? 'Module 3' : 'Unknown';
+    
+    card.innerHTML = `
+      <div class="camera-header">
+        <div class="camera-title">${camera.id}</div>
+        <div class="camera-status status-stopped" id="status-${camera.id}">Stopped</div>
+      </div>
+      <div class="camera-location">📍 Location: ${location}</div>
+      <div class="roi-instructions" id="roi-instructions-${camera.id}">
+        📐 Click and drag on the video to draw the Region of Interest (ROI)
+      </div>
+      <div class="roi-info" id="roi-info-${camera.id}"></div>
+      <div class="video-container" id="video-container-${camera.id}">
+        <div class="video-placeholder" id="placeholder-${camera.id}">Camera feed will appear here</div>
+        <img id="video-${camera.id}" style="display:none;" alt="${camera.id} feed" />
+        <canvas id="canvas-${camera.id}" style="display:none;"></canvas>
+      </div>
+      <div class="camera-controls">
+        <button class="btn btn-outline-primary" onclick="startCamera('${camera.id}', '${camera.url}')">▶ Start</button>
+        <button class="btn btn-outline-danger" onclick="stopCamera('${camera.id}')">⏹ Stop</button>
+        <button class="btn btn-outline-info text-dark" onclick="openFullscreen('${camera.id}')">⛶ Fullscreen</button>
+        <button class="btn btn-outline-success" onclick="drawROI('${camera.id}')">✏️ Draw ROI</button>
+        <button class="btn btn-outline-dark" onclick="resetROI('${camera.id}')">🔄 Reset ROI</button>
+      </div>
+    `;
+    
+    return card;
+  }
+
+  let cameraStates = {}; // { [id]: { running: bool, url: string, cacheBust: number } }
+
+  async function startCamera(cameraId, url) {
+    try {
+      updateCameraStatus(cameraId, 'loading', 'Starting...');
+      const response = await fetch(`/api/start/${cameraId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        // set/refresh cache-bust version so a new stream URL is fetched
+        cameraStates[cameraId] = { running: true, url: url, cacheBust: Date.now() };
+        updateCameraStatus(cameraId, 'running', 'Running');
+        startVideoFeed(cameraId);
+        showNotification(`${cameraId} started successfully`, 'success');
+      } else {
+        updateCameraStatus(cameraId, 'stopped', 'Error');
+        showNotification(`Failed to start ${cameraId}: ${result.message}`, 'error');
+      }
+    } catch (error) {
+      updateCameraStatus(cameraId, 'stopped', 'Error');
+      showNotification(`Error starting ${cameraId}`, 'error');
+      console.error(error);
+    }
+  }
+
+  async function stopCamera(cameraId) {
+    try {
+      const response = await fetch(`/api/stop/${cameraId}`, {
+        method: 'POST'
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        delete cameraStates[cameraId];
+        updateCameraStatus(cameraId, 'stopped', 'Stopped');
+        stopVideoFeed(cameraId);
+        // (ROI persistence behavior unchanged)
+        clearStoredROI(cameraId);
+        if (roiDrawers[cameraId]) roiDrawers[cameraId].clearROI();
+        if (roiDrawers[`${cameraId}_fullscreen`]) roiDrawers[`${cameraId}_fullscreen`].clearROI();
+
+        showNotification(`${cameraId} stopped successfully`, 'success');
+      } else {
+        showNotification(`Failed to stop ${cameraId}: ${result.message}`, 'error');
+      }
+    } catch (error) {
+      showNotification(`Error stopping ${cameraId}`, 'error');
+      console.error(error);
+    }
+  }
+
+  async function startAll() {
+    try {
+      const cameras = cameraConfigs[currentModule] || [];
+      let activeCount = 0;
+
+      for (const camera of cameras) {
+        try {
+          updateCameraStatus(camera.id, 'loading', 'Starting...');
+          const response = await fetch(`/api/start/${camera.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: camera.url })
+          });
+          const result = await response.json();
+          if (result.status === 'success') {
+            // ensure new cache-bust for each start
+            cameraStates[camera.id] = { running: true, url: camera.url, cacheBust: Date.now() };
+            updateCameraStatus(camera.id, 'running', 'Running');
+            startVideoFeed(camera.id);
+            activeCount++;
+          } else {
+            updateCameraStatus(camera.id, 'stopped', 'Error');
+            showNotification(`Failed to start ${camera.id}: ${result.message}`, 'error');
+          }
+        } catch (error) {
+          updateCameraStatus(camera.id, 'stopped', 'Error');
+          showNotification(`Error starting ${camera.id}`, 'error');
+          console.error(error);
+        }
+      }
+
+      document.getElementById('activeCameras').textContent = activeCount;
+      showNotification('All cameras started', 'success');
+    } catch (error) {
+      showNotification('Error starting cameras', 'error');
+      console.error(error);
+    }
+  }
+
+  async function stopAll() {
+    try {
+      const response = await fetch('/api/stop_all', { method: 'POST' });
+      const result = await response.json();
+      if (result.status === 'success') {
+        result.results.forEach(r => {
+          delete cameraStates[r.camera_id];
+          updateCameraStatus(r.camera_id, 'stopped', 'Stopped');
+          stopVideoFeed(r.camera_id);
+          // (ROI persistence behavior unchanged)
+          clearStoredROI(r.camera_id);
+          if (roiDrawers[r.camera_id]) roiDrawers[r.camera_id].clearROI();
+          if (roiDrawers[`${r.camera_id}_fullscreen`]) roiDrawers[`${r.camera_id}_fullscreen`].clearROI();
+        });
+        document.getElementById('activeCameras').textContent = 0;
+        showNotification('All cameras stopped', 'success');
+      }
+    } catch (error) {
+      showNotification('Error stopping cameras', 'error');
+      console.error(error);
+    }
+  }
+
+  function updateCameraStatus(cameraId, status, text) {
+    const statusElement = document.getElementById(`status-${cameraId}`);
+    if (statusElement) {
+      statusElement.className = `camera-status status-${status}`;
+      statusElement.textContent = text;
+    }
+  }
+
+  function startVideoFeed(cameraId) {
+    const placeholder = document.getElementById(`placeholder-${cameraId}`);
+    const img = document.getElementById(`video-${cameraId}`);
+    const canvas = document.getElementById(`canvas-${cameraId}`);
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (img) {
+      // >>> Cache-busting query param so each start fetches the current feed
+      const v = cameraStates[cameraId]?.cacheBust || Date.now();
+      img.src = `/api/video_feed/${cameraId}?v=${v}`;
+      img.style.display = 'block';
+
+      img.onload = function() {
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.display = 'block';
+
+        if (!roiDrawers[cameraId]) {
+          roiDrawers[cameraId] = new ROIDrawer(cameraId, `canvas-${cameraId}`, `video-${cameraId}`);
+        }
+
+        // Re-apply any stored ROI when the feed (re)loads
+        drawStoredROI(cameraId);
+      };
+    }
+  }
+
+  function stopVideoFeed(cameraId) {
+    const placeholder = document.getElementById(`placeholder-${cameraId}`);
+    const img = document.getElementById(`video-${cameraId}`);
+    const canvas = document.getElementById(`canvas-${cameraId}`);
+
+    if (img) {
+      img.style.display = 'none';
+      // >>> Clear src so browser drops any stale stream and caches
+      img.removeAttribute('src');
+    }
+    if (canvas) {
+      canvas.style.display = 'none';
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    if (placeholder) {
+      placeholder.textContent = 'Camera feed stopped';
+      placeholder.style.display = 'block';
+    }
+  }
+
+  function drawROI(cameraId) {
+    if (roiDrawers[cameraId]) {
+      roiDrawers[cameraId].enableDrawing();
+    } else {
+      showNotification('Please start the camera first', 'error');
+    }
+  }
+
+  async function resetROI(cameraId) {
+    try {
+      const response = await fetch(`/api/reset_roi/${cameraId}`, { method: 'POST' });
+      const result = await response.json();
+      if (result.status === 'success') {
+        if (roiDrawers[cameraId]) roiDrawers[cameraId].clearROI();
+        if (roiDrawers[`${cameraId}_fullscreen`]) roiDrawers[`${cameraId}_fullscreen`].clearROI();
+        clearStoredROI(cameraId);
+        showNotification(`ROI reset for ${cameraId}`, 'success');
+      } else {
+        showNotification(`Failed to reset ROI: ${result.message}`, 'error');
+      }
+    } catch (error) {
+      showNotification('Error resetting ROI', 'error');
+      console.error(error);
+    }
+  }
+
+  function positionFullscreenWindow() {
+    const modal = document.getElementById('fullscreenModal');
+    const main = document.getElementById('mainContent');
+    const topbar = document.getElementById('topbar-container');
+    const footer = document.querySelector('.footer');
+
+    if (!modal || !main) return;
+
+    const mainRect = main.getBoundingClientRect();
+    const topbarH = topbar ? topbar.offsetHeight : 0;
+    const footerH = footer ? footer.offsetHeight : 0;
+
+    const gutter = 12;
+
+    const top = mainRect.top + topbarH + gutter + window.scrollY;
+    const left = mainRect.left + gutter + window.scrollX;
+    const right = mainRect.right - gutter + window.scrollX;
+    const bottom = window.innerHeight - (footerH + gutter);
+
+    const width = Math.max(480, right - left);
+    const height = Math.max(320, bottom - top);
+
+    modal.style.top = `${top}px`;
+    modal.style.left = `${left}px`;
+    modal.style.width = `${width}px`;
+    modal.style.height = `${height}px`;
+  }
+
+  function openFullscreen(cameraId) {
+    const statusElement = document.getElementById(`status-${cameraId}`);
+    if (!statusElement || !statusElement.classList.contains('status-running')) {
+      showNotification('Please start the camera first', 'error');
+      return;
+    }
+
+    currentFullscreenCamera = cameraId;
+    const modal = document.getElementById('fullscreenModal');
+    const fullscreenImage = document.getElementById('fullscreenImage');
+    const fullscreenCanvas = document.getElementById('fullscreenCanvas');
+    const fullscreenTitle = document.getElementById('fullscreenTitle');
+    
+    fullscreenTitle.textContent = `${cameraId} – Viewer`;
+    // viewer can use the live endpoint; cachebust not strictly required here,
+    // but safe to include the same version for consistency if desired:
+    const v = cameraStates[cameraId]?.cacheBust || Date.now();
+    fullscreenImage.src = `/api/video_feed/${cameraId}?v=${v}`;
+    
+    fullscreenImage.onload = function() {
+      fullscreenCanvas.width = fullscreenImage.naturalWidth;
+      fullscreenCanvas.height = fullscreenImage.naturalHeight;
+      
+      if (!roiDrawers[`${cameraId}_fullscreen`]) {
+        roiDrawers[`${cameraId}_fullscreen`] = new ROIDrawer(`${cameraId}_fullscreen`, 'fullscreenCanvas', 'fullscreenImage');
+      }
+
+      drawStoredROIFullscreen(cameraId);
+    };
+
+    positionFullscreenWindow();
+    modal.classList.add('active');
+
+    document.getElementById('zoomSlider').value = 100;
+    document.getElementById('zoomValue').textContent = '100%';
+    updateZoom();
+    
+    showNotification('Opened in viewer window', 'info');
+  }
+
+  function closeFullscreen() {
+    const modal = document.getElementById('fullscreenModal');
+    const fullscreenImage = document.getElementById('fullscreenImage');
+    const fullscreenCanvas = document.getElementById('fullscreenCanvas');
+    
+    modal.classList.remove('active');
+    fullscreenImage.src = '';
+    
+    const ctx = fullscreenCanvas.getContext('2d');
+    ctx.clearRect(0, 0, fullscreenCanvas.width, fullscreenCanvas.height);
+    
+    const roiInfo = document.getElementById('fullscreenRoiInfo');
+    roiInfo.classList.remove('active');
+    
+    currentFullscreenCamera = null;
+    showNotification('Viewer closed', 'info');
+  }
+
+  function updateZoom() {
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomValue = document.getElementById('zoomValue');
+    const wrapper = document.getElementById('fullscreenVideoWrapper');
+    
+    const zoom = zoomSlider.value;
+    zoomValue.textContent = `${zoom}%`;
+    wrapper.style.transform = `scale(${zoom / 100})`;
+  }
+
+  window.addEventListener('resize', () => {
+    const modal = document.getElementById('fullscreenModal');
+    if (modal.classList.contains('active')) positionFullscreenWindow();
+  });
+  window.addEventListener('scroll', () => {
+    const modal = document.getElementById('fullscreenModal');
+    if (modal.classList.contains('active')) positionFullscreenWindow();
+  });
+
+  document.getElementById('zoomSlider').addEventListener('input', updateZoom);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && currentFullscreenCamera) {
+      closeFullscreen();
+    }
+  });
+
+  async function refreshStatus() {
+    try {
+      const response = await fetch('/api/status');
+      const status = await response.json();
+      
+      let activeCount = 0;
+      
+      for (const [cameraId, cameraStatus] of Object.entries(status)) {
+        if (cameraStatus.running) {
+          // if backend says running but we don't have cacheBust, assign one
+          if (!cameraStates[cameraId]) {
+            cameraStates[cameraId] = { running: true, url: cameraStates[cameraId]?.url || '', cacheBust: Date.now() };
+          } else {
+            cameraStates[cameraId].running = true;
+            cameraStates[cameraId].cacheBust = cameraStates[cameraId].cacheBust || Date.now();
+          }
+          updateCameraStatus(cameraId, 'running', 'Running');
+          startVideoFeed(cameraId);
+          activeCount++;
+        } else {
+          delete cameraStates[cameraId];
+          updateCameraStatus(cameraId, 'stopped', 'Stopped');
+          stopVideoFeed(cameraId);
+        }
+      }
+      
+      document.getElementById('activeCameras').textContent = activeCount;
+      showNotification('Status refreshed', 'info');
+    } catch (error) {
+      showNotification('Error refreshing status', 'error');
+      console.error(error);
+    }
+  }
+
+  function startStatusPolling() {
+    if (statusInterval) clearInterval(statusInterval);
+    statusInterval = setInterval(refreshStatus, 5000);
+  }
+
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 2200);
+  }
+
+  document.getElementById('moduleSelect').addEventListener('change', (e) => {
+    currentModule = e.target.value;
+    updateCameraGrid();
+    roiDrawers = {}; // reset drawers only (keeps ROI persistence intact)
+  });
+
+  window.addEventListener('load', () => {
+    loadCameras();
+  });
+</script>
+</body>
+</html>

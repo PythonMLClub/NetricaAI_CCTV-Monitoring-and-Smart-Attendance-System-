@@ -1,0 +1,47 @@
+<div class="top-bar d-flex justify-content-between align-items-center mb-3 mt-3 mx-3">
+  <!-- Left: Logo + Title -->
+  <div class="d-flex align-items-center gap-2 ps-3">
+    <div class="netrica-logo">
+      <i class="bi bi-camera-video-fill"></i>
+    </div>
+    <h4 class="netrica-title mb-0">NETRICA</h4>
+  </div>
+
+  <!-- Right: Notification + User -->
+  <div class="d-flex gap-4 align-items-center">
+    <i class="bi bi-bell-fill text-muted" style="font-size: 1.25rem; cursor: pointer;">
+      <!--<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+        3
+      </span>-->
+    
+    </i>
+
+    <div class="d-flex gap-2 align-items-center">
+      <!-- CORRECTED PATH: Use /static/img/woman.png -->
+      <img 
+        src="/static/img/woman.png" 
+        alt="Admin" 
+        width="30" height="30" 
+        class="rounded-circle border"
+        onerror="this.src='/static/img/woman.png'" >
+      <p class="small mb-0">
+        <strong>Kavitha</strong><br>
+        <span class="text-muted small">Admin</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .netrica-logo {
+    width: 40px; height: 40px; background:#5b7cee; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(91,124,238,.25);
+  }
+  .netrica-logo i {font-size:20px; color:#fff;}
+  .netrica-title {font-weight:700; font-size:1.5rem; color:#1a202c;}
+  @media (max-width:768px){
+    .top-bar{flex-direction:column; text-align:center; gap:10px;}
+    .netrica-title{font-size:1.3rem;}
+  }
+</style>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netrica Crowd Detection</title>
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../static/img/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="../static/css/style.css">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Inline Styles -->
+  <style>
+    html, body, .container-fluid, .row { overflow-x: hidden; }
+    .uniform-btn { 
+      width: 100%; 
+      height: 38px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 0 10px; 
+      flex-grow: 1;
+    }
+    .filter-buttons { display: flex; gap: 10px; }
+    .filter-container {
+      padding-left: 20px;
+      width: 100%;
+    }
+    .table-responsive {
+      max-height: 450px;
+      overflow-y: auto;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      width: 100%;
+      display: block;
+    }
+    .table {
+      width: 100%;
+      table-layout: fixed;
+    }
+    .table th, .table td {
+      word-wrap: break-word;
+      white-space: normal;
+      padding: 10px;
+    }
+    .main-content {
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: 130px;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #d2dbe5 !important;
+      min-height: 30px;
+      padding: 5px 0;
+      margin: 0;
+      z-index: 1000;
+      text-align: center;
+    }
+    .footer p { font-size: 0.75rem; margin: 0; }
+    .content-wrapper { margin-top: 30px; }
+    .card-body { padding-bottom: 20px; }
+    .pagination-container {
+      position: sticky;
+      bottom: 60px;
+      background: #fff;
+      padding: 10px;
+      z-index: 999;
+      border-top: 1px solid #dee2e6;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .pagination {
+      justify-content: center;
+      margin: 0;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .pagination .page-item {
+      margin: 0 2px;
+      flex: 0 0 auto;
+    }
+    .pagination .page-link {
+      border: none;
+      background: none;
+      color: #007bff;
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #007bff;
+      color: white;
+      border-radius: 3px;
+    }
+    .pagination .page-item.disabled .page-link {
+      color: #6c757d;
+      pointer-events: none;
+    }
+    .modal-content {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
+    }
+    .modal-footer {
+      border-top: none;
+      padding-top: 0;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      padding: 5px 20px;
+      border-radius: 5px;
+    }
+    .image-column {
+      width: 80px;
+      min-width: 80px;
+      white-space: normal;
+    }
+    #imagePopup .modal-dialog { max-width: 90%; width: auto; margin: 1.75rem auto; }
+    #imagePopup .modal-content { background: #fff; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px; position: relative; width: auto !important; }
+    #imagePopup .modal-dialog-centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100% - var(--bs-modal-margin) * 2);
+    }
+    #imagePopup .modal-body { padding: 0; }
+    #imagePopup .image-container { position: relative; display: inline-block; border: 2px solid #ccc; padding: 10px; }
+    #imagePopup .popup-image { max-width: 100%; max-height: 70vh; object-fit: contain; }
+    #imagePopup .custom-close-btn {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #000;
+      z-index: 1;
+    }
+    #imagePopup .custom-close-btn:hover { background: #ddd; }
+    .custom-pagination-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      font-size: 0.875rem;
+      color: #6c757d;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .custom-pagination-info select {
+      padding: 2px 5px;
+      font-size: 0.875rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+    }
+    .form-control-sm, .form-select-sm {
+      font-size: 0.9rem;
+      padding: 6px 8px;
+      height: 34px;
+    }
+    .form-label {
+      font-size: 0.85rem;
+      margin-bottom: 3px;
+    }
+    .filter-buttons .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 768px) {
+      .pagination-container { bottom: 70px; }
+      .table th, .table td { font-size: 0.8rem; padding: 4px; }
+      .filter-buttons { flex-direction: column; align-items: stretch; }
+      .filter-buttons .btn { width: 100%; }
+      .main-content { padding-bottom: 180px; }
+      .footer { min-height: 50px; }
+      .col-md-2 { width: 50%; }
+    }
+    @media (max-width: 576px) {
+      .pagination-container { bottom: 80px; }
+      .table th, .table td { font-size: 0.75rem; padding: 3px; }
+      .filter-buttons .btn { font-size: 0.8rem; padding: 5px; }
+      .main-content { padding-bottom: 200px; }
+      .footer { min-height: 60px; }
+      .col-md-2 { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-2 p-0 position-fixed top-0 start-0 vh-100">
+        <div class="left-panel p-3 text-white">
+          <img src="../static/img/logo.png" alt="logo" width="100" height="100" class="mx-auto d-block mb-4">
+          <div id="menus">
+            <div class="menu-item"><i class="bi bi-speedometer2 me-2"></i> Live Dashboard</div>
+            <div class="menu-item"><i class="bi bi-people me-2"></i> Employee Logs</div>
+            <div class="menu-item"><i class="bi bi-clock me-2"></i> Attendance Logs</div>
+            <div class="menu-item"><i class="bi bi-table me-2"></i> Attendance Dashboard</div>
+            <div class="menu-item active"><i class="bi bi-people-fill me-2"></i> Crowd Detection</div>
+            <div class="menu-item"><i class="bi bi-credit-card me-2"></i> ID Card Compliance</div>
+            <div class="menu-item"><i class="bi bi-display me-2"></i> Unattended System</div>
+            <div class="menu-item"><i class="bi bi-moon-stars-fill me-2"></i> Sleep/Mealtime Detection</div>
+            <div class="menu-item"><i class="bi bi-geo-alt me-2"></i> GEO-Fence Intrusions</div>
+            <div class="menu-item"><i class="bi bi-exclamation-triangle me-2"></i> Alerts & Violations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-10 offset-lg-2 main-content">
+        <div id="topbar-placeholder"></div>
+
+        <div class="content-wrapper">
+          <div class="card shadow-sm mx-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0"><i class="bi bi-people-fill me-2"></i> Crowd Detection</h6>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-sm btn-outline-primary uniform-btn" id="todayFilter">Today</button>
+                <button class="btn btn-outline-primary btn-sm uniform-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-download"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" id="downloadCsv"><i class="bi bi-file-earmark-spreadsheet me-2"></i>CSV</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadExcel"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <!-- Filters -->
+              <div class="filter-container">
+                <form class="row g-3 align-items-end mb-4" id="filterForm">
+                  <div class="col-md-2">
+                    <label for="filterCameraID" class="form-label small fw-bold">Camera ID</label>
+                    <select id="filterCameraID" class="form-select form-select-sm">
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="startDate" class="form-label small fw-bold">From</label>
+                    <input type="date" id="startDate" class="form-control form-control-sm">
+                  </div>
+                  <div class="col-md-2">
+                    <label for="endDate" class="form-label small fw-bold">To</label>
+                    <input type="date" id="endDate" class="form-control form-control-sm">
+                  </div>
+                  <div class="col-md-2 filter-buttons">
+                    <button type="submit" class="btn btn-primary btn-sm uniform-btn">
+                      <i class="bi bi-funnel me-1"></i> Apply
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm uniform-btn" id="clearFilters">
+                      <i class="bi bi-x-circle me-1"></i> Clear
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Table -->
+              <div class="card-body">
+                <div class="table-responsive" id="tableContainer">
+                  <table class="table table-bordered table-hover mb-0" id="crowdTable">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Camera ID</th>
+                        <th>Crowd Detection ID</th>
+                        <th>Description</th>
+                        <th>Detection Time</th>
+                        <th>Duration</th>
+                        <th>People Count</th>
+                        <th class="image-column">Image</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="custom-pagination-info" style="display: none;">
+                  <span id="paginationInfo">Showing 1 - 10 of 0</span>
+                  <div>
+                    <span>Rows per page:</span>
+                    <select id="rowsPerPage">
+                      <option value="10" selected>10</option>
+                      <option value="20">20</option>
+                      <option value="30">30</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pagination-container" style="display: none;">
+                  <nav aria-label="Page navigation example" id="pagination">
+                    <ul class="pagination">
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous" id="prevPage">
+                          <span aria-hidden="true">Previous</span>
+                        </a>
+                      </li>
+                      <li class="page-item active"><a class="page-link" href="#" data-page="1">1</a></li>
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next" id="nextPage">
+                          <span aria-hidden="true">Next</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer text-center">
+          <hr class="border border-gray m-0">
+          <p class="text-muted small">TatvaOne.AI © 2025. All rights reserved</p>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-body">
+                <h6 id="errorTitle" class="mb-1"></h6>
+                <p id="errorMessage" class="mb-0"></p>
+              </div>
+              <div class="modal-footer justify-content-center border-0 pt-0">
+                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Popup Modal -->
+        <div class="modal fade" id="imagePopup" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="image-container">
+                  <img src="" alt="Crowd Event Image" class="popup-image">
+                  <button type="button" class="custom-close-btn" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../static/js/loadLayouts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    let allData = [];
+    let filteredData = [];
+    let rowsPerPage = 10;
+    let currentPage = 1;
+    let currentBlockIndex = 0;
+    let tableScrollPosition = 0;
+
+    async function loadTopbar() {
+      try {
+        const response = await fetch('/templates/topbar.html');
+        if (!response.ok) throw new Error('Failed to load topbar.html');
+        const content = await response.text();
+        document.getElementById('topbar-placeholder').innerHTML = content;
+      } catch (err) {
+        console.error('Error loading topbar:', err.message);
+        document.getElementById('topbar-placeholder').innerHTML = '<div class="text-danger mx-3">Error Loading Topbar</div>';
+      }
+    }
+
+    function formatDetectionTime(timeStr) {
+      if (!timeStr) return 'N/A';
+      try {
+        return timeStr.split('.')[0];
+      } catch (err) {
+        console.error('Error formatting time:', err.message);
+        return 'N/A';
+      }
+    }
+
+    function populateCameraIDDropdown() {
+      const select = document.getElementById('filterCameraID');
+      select.innerHTML = '<option value="">All</option>';
+      const uniqueCameraIDs = [...new Set(allData.map(item => item.CameraID).filter(id => id))];
+      uniqueCameraIDs.forEach(id => {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = id;
+        select.appendChild(option);
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.querySelector("#crowdTable tbody");
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-dark py-4">Data is loading. please wait...</td></tr>`;
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const paginated = data.slice(start, end);
+
+      tbody.innerHTML = paginated.length
+        ? paginated.map(item => `
+          <tr>
+            <td>${item.CameraID || 'N/A'}</td>
+            <td>${item.CrowdDetectionID || 'N/A'}</td>
+            <td>${item.Description || 'N/A'}</td>
+            <td>${formatDetectionTime(item.DetectionTime)}</td>
+            <td>${item.Duration || '0'}</td>
+            <td>${item.PeopleCount || '0'}</td>
+            <td class="image-column">
+              ${item.image 
+                ? `<a href="#" class="view-image" data-bs-toggle="modal" data-bs-target="#imagePopup" data-image="${item.image}">View</a>` 
+                : 'No Image'}
+            </td>
+          </tr>
+        `).join('')
+        : '<tr><td colspan="7" class="text-center text-dark">No data available</td></tr>';
+
+      const totalItems = data.length;
+      const startItem = start + 1;
+      const endItem = Math.min(end, totalItems);
+      document.getElementById('paginationInfo').textContent = `Showing ${startItem} - ${endItem} of ${totalItems}`;
+      document.querySelector(".custom-pagination-info").style.display = totalItems > 0 ? "flex" : "none";
+      updatePagination(totalItems);
+    }
+
+    function updatePagination(totalRows) {
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+      const pagination = document.getElementById("pagination");
+      const paginationUl = pagination.querySelector("ul.pagination");
+
+      if (totalRows > rowsPerPage) {
+        pagination.style.display = "block";
+
+        paginationUl.innerHTML = `
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous" id="prevPage">
+              <span aria-hidden="true">Previous</span>
+            </a>
+          </li>
+        `;
+
+        const blockSize = 5;
+        const lastBlockStart = Math.max(1, totalPages - blockSize + 1);
+        let pages = [];
+
+        if (totalPages <= blockSize) {
+          for (let i = 1; i <= totalPages; i++) {
+            pages.push(i);
+          }
+        } else {
+          const startPage = currentBlockIndex * blockSize + 1;
+          const endPage = Math.min(startPage + blockSize - 1, totalPages);
+
+          if (startPage > 1) {
+            pages.push('...');
+          }
+
+          for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+          }
+
+          if (endPage < lastBlockStart - 1) {
+            pages.push('...');
+          }
+          if (endPage < lastBlockStart) {
+            for (let i = lastBlockStart; i <= totalPages; i++) {
+              pages.push(i);
+            }
+          }
+        }
+
+        pages.forEach(page => {
+          if (page === '...') {
+            const pageItem = document.createElement("li");
+            pageItem.className = "page-item disabled";
+            pageItem.innerHTML = `<span class="page-link">...</span>`;
+            paginationUl.appendChild(pageItem);
+          } else {
+            const pageItem = document.createElement("li");
+            pageItem.className = `page-item${page === currentPage ? " active" : ""}`;
+            pageItem.innerHTML = `<a class="page-link" href="#" data-page="${page}">${page}</a>`;
+            paginationUl.appendChild(pageItem);
+          }
+        });
+
+        paginationUl.innerHTML += `
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next" id="nextPage">
+              <span aria-hidden="true">Next</span>
+            </a>
+          </li>
+        `;
+
+        const prevButton = document.getElementById("prevPage");
+        const nextButton = document.getElementById("nextPage");
+        prevButton.parentElement.classList.toggle("disabled", currentPage === 1);
+        nextButton.parentElement.classList.toggle("disabled", currentPage === totalPages || totalPages === 0);
+
+        prevButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (currentPage > 1) {
+            currentPage--;
+            if (currentPage % blockSize === 0 && currentBlockIndex > 0) {
+              currentBlockIndex--;
+            }
+            renderTable(filteredData);
+            updatePagination(filteredData.length);
+          }
+        });
+
+        nextButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (currentPage < totalPages) {
+            currentPage++;
+            if (currentPage % blockSize === 0 && currentPage < lastBlockStart) {
+              currentBlockIndex++;
+            }
+            renderTable(filteredData);
+            updatePagination(filteredData.length);
+          }
+        });
+
+        paginationUl.querySelectorAll("a[data-page]").forEach(link => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const page = parseInt(e.target.getAttribute("data-page"));
+            if (page !== currentPage) {
+              if (page % blockSize === 0 && page < lastBlockStart) {
+                currentBlockIndex = Math.floor(page / blockSize);
+              } else if ((page - 1) % blockSize === 0 && currentBlockIndex > 0) {
+                currentBlockIndex--;
+              }
+              currentPage = page;
+              renderTable(filteredData);
+              updatePagination(filteredData.length);
+            }
+          });
+        });
+      } else {
+        pagination.style.display = "none";
+      }
+    }
+
+    document.getElementById("filterForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const { filterCameraID, startDate, endDate } = e.target.elements;
+
+      if (!filterCameraID.value && !startDate.value && !endDate.value) {
+        document.getElementById('errorTitle').textContent = 'No Filters Applied';
+        document.getElementById('errorMessage').textContent = 'Please Select At Least One Filter To Proceed.';
+        new bootstrap.Modal(document.getElementById('errorModal')).show();
+        return;
+      }
+
+      if (startDate.value && endDate.value && new Date(startDate.value) > new Date(endDate.value)) {
+        document.getElementById('errorTitle').textContent = 'Invalid Date Range';
+        document.getElementById('errorMessage').textContent = 'The "From" Date Cannot Be After The "To" Date.';
+        new bootstrap.Modal(document.getElementById('errorModal')).show();
+        return;
+      }
+
+      filteredData = allData.filter(item => {
+        const matchCameraID = !filterCameraID.value || 
+          String(item.CameraID || '').toLowerCase() === filterCameraID.value.toLowerCase();
+        const fullTime = item.DetectionTime ? item.DetectionTime.split('.')[0] : '';
+        const recordTime = new Date(fullTime);
+        const matchDate = (!startDate.value && !endDate.value) ||
+          (startDate.value ? recordTime >= new Date(startDate.value) : true) &&
+          (endDate.value ? recordTime <= new Date(endDate.value + 'T23:59:59') : true);
+        return matchCameraID && matchDate;
+      });
+
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+      document.querySelector(".pagination-container").style.display = filteredData.length > rowsPerPage ? "block" : "none";
+      document.querySelector(".custom-pagination-info").style.display = filteredData.length > 0 ? "flex" : "none";
+    });
+
+    document.getElementById("clearFilters").addEventListener("click", () => {
+      document.getElementById("filterForm").reset();
+      filteredData = [...allData];
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+      document.querySelector(".pagination-container").style.display = filteredData.length > rowsPerPage ? "block" : "none";
+      document.querySelector(".custom-pagination-info").style.display = filteredData.length > 0 ? "flex" : "none";
+    });
+
+    // Today Filter
+    document.getElementById("todayFilter").addEventListener("click", () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("startDate").value = today;
+      document.getElementById("endDate").value = today;
+      document.getElementById("filterForm").dispatchEvent(new Event("submit"));
+    });
+
+    document.getElementById("downloadCsv").addEventListener("click", () => {
+      const dataToDownload = filteredData.length ? filteredData : allData;
+      const headers = ["CameraID", "CrowdDetectionID", "Description", "DetectionTime", "Duration", "PeopleCount"];
+      const rows = dataToDownload.map(item => [
+        item.CameraID || 'N/A',
+        item.CrowdDetectionID || 'N/A',
+        item.Description || 'N/A',
+        formatDetectionTime(item.DetectionTime),
+        item.Duration || '0',
+        item.PeopleCount || '0'
+      ]);
+      let csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.map(f => `"${f}"`).join(","))].join("\n");
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csv));
+      link.setAttribute("download", "crowd_detection.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    document.getElementById("downloadExcel").addEventListener("click", () => {
+      const dataToDownload = filteredData.length ? filteredData : allData;
+      const ws = XLSX.utils.json_to_sheet(dataToDownload.map(item => ({
+        "CameraID": item.CameraID || 'N/A',
+        "CrowdDetectionID": item.CrowdDetectionID || 'N/A',
+        "Description": item.Description || 'N/A',
+        "DetectionTime": formatDetectionTime(item.DetectionTime),
+        "Duration": item.Duration || '0',
+        "PeopleCount": item.PeopleCount || '0'
+      })));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Crowd Detection");
+      XLSX.writeFile(wb, "Crowd_Detection.xlsx");
+    });
+
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('view-image')) {
+        e.preventDefault();
+        const base64Data = e.target.getAttribute('data-image');
+        const img = document.querySelector('#imagePopup .popup-image');
+        const tableContainer = document.getElementById('tableContainer');
+        if (base64Data) {
+          tableScrollPosition = tableContainer.scrollTop;
+          img.src = `data:image/jpeg;base64,${base64Data}`;
+          new bootstrap.Modal(document.getElementById('imagePopup')).show();
+        } else {
+          document.getElementById('errorTitle').textContent = 'Image Error';
+          document.getElementById('errorMessage').textContent = 'No image data available.';
+          new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
+      }
+    });
+
+    const imagePopup = document.getElementById('imagePopup');
+    imagePopup.addEventListener('hidden.bs.modal', function () {
+      const img = document.querySelector('#imagePopup .popup-image');
+      const tableContainer = document.getElementById('tableContainer');
+      img.src = '';
+      tableContainer.scrollTop = tableScrollPosition;
+      const backdrops = document.querySelectorAll('.modal-backdrop');
+      backdrops.forEach(b => b.remove());
+      document.body.style.overflow = 'auto';
+    });
+
+    document.getElementById('rowsPerPage').addEventListener('change', function (e) {
+      rowsPerPage = parseInt(e.target.value);
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+      document.querySelector(".pagination-container").style.display = filteredData.length > rowsPerPage ? "block" : "none";
+      document.querySelector(".custom-pagination-info").style.display = filteredData.length > 0 ? "flex" : "none";
+    });
+
+    async function loadData(retries = 3) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const response = await fetch('/crowd-detection');
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          const data = await response.json();
+          allData = Array.isArray(data) ? data.map(item => ({
+            CameraID: item.CameraID || item.camera_id || item.cameraId || '',
+            CrowdDetectionID: item.CrowdDetectionID || item.crowd_detection_id || item.CrowdEventID || item.crowdEventID || '',
+            Description: item.Description || item.description || '',
+            DetectionTime: item.DetectionTime || item.detection_time || item.detectionTime || '',
+            Duration: item.Duration || item.duration || '0',
+            PeopleCount: item.PeopleCount || item.people_count || '0',
+            image: item.image || item.ImageEmbedding || item.image_embedding || ''
+          })) : (data.results || []).map(item => ({
+            CameraID: item.CameraID || item.camera_id || item.cameraId || '',
+            CrowdDetectionID: item.CrowdDetectionID || item.crowd_detection_id || item.CrowdEventID || item.crowdEventID || '',
+            Description: item.Description || item.description || '',
+            DetectionTime: item.DetectionTime || item.detection_time || item.detectionTime || '',
+            Duration: item.Duration || item.duration || '0',
+            PeopleCount: item.PeopleCount || item.people_count || '0',
+            image: item.image || item.ImageEmbedding || item.image_embedding || ''
+          }));
+          if (!Array.isArray(allData)) throw new Error('Fetched data is not an iterable array');
+          filteredData = [...allData];
+          currentPage = 1;
+          currentBlockIndex = 0;
+          renderTable(filteredData);
+          populateCameraIDDropdown();
+          document.querySelector(".pagination-container").style.display = filteredData.length > rowsPerPage ? "block" : "none";
+          document.querySelector(".custom-pagination-info").style.display = filteredData.length > 0 ? "flex" : "none";
+          return;
+        } catch (err) {
+          console.error(`Attempt ${i + 1} failed:`, err.message, err.stack);
+          if (i === retries - 1) {
+            allData = [
+              { CameraID: "CAM01", CrowdDetectionID: "CD001", Description: "Crowd at entrance", DetectionTime: "2025-10-25 15:32:00", Duration: "5 min", PeopleCount: "10", image: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" },
+              { CameraID: "CAM02", CrowdDetectionID: "CD002", Description: "Crowd at cafeteria", DetectionTime: "2025-10-25 15:32:00", Duration: "10 min", PeopleCount: "15", image: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" },
+              { CameraID: "CAM03", CrowdDetectionID: "CD003", Description: "Crowd at meeting room", DetectionTime: "2025-10-25 15:32:00", Duration: "8 min", PeopleCount: "8", image: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" }
+            ];
+            filteredData = [...allData];
+            currentPage = 1;
+            currentBlockIndex = 0;
+            renderTable(filteredData);
+            populateCameraIDDropdown();
+            document.querySelector(".pagination-container").style.display = filteredData.length > rowsPerPage ? "block" : "none";
+            document.querySelector(".custom-pagination-info").style.display = filteredData.length > 0 ? "flex" : "none";
+            document.querySelector("#crowdTable tbody").innerHTML = `<tr><td colspan="7" class="text-center text-dark">No data available</td></tr>`;
+          }
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
+    }
+
+    loadTopbar();
+    loadData();
+  </script>
+</body>
+</html>

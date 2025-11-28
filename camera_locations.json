@@ -1,0 +1,11 @@
+{
+    "Turnstile_Entry_M1": {"Location": "TIDEL_PARK", "Description": "Main Entrance", "Type": "Entry"},
+    "Turnstile_Exit_M1": {"Location": "TIDEL_PARK", "Description": "Main Exit", "Type": "Exit"},
+    "DataTeam_cabin_1_M1": {"Location": "TIDEL_PARK", "Description": "DataTeam Cabin 1", "Type": "General"},
+    "DataTeam_cabin_2_M1": {"Location": "TIDEL_PARK", "Description": "DataTeam Cabin 2", "Type": "General"},
+    "Reception_M3": {"Location": "TIDEL_PARK", "Description": "Reception Area", "Type": "General"},
+    "Turnstile_Entry_M3": {"Location": "TIDEL_PARK", "Description": "Phase 3 Entrance", "Type": "Entry"},
+    "Turnstile_Exit_M3": {"Location": "TIDEL_PARK", "Description": "Phase 3 Exit", "Type": "Exit"}
+}
+
+

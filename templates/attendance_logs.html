@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netrica</title>
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="../static/img/favicon.ico" type="image/x-icon">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="../static/css/style.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Inline Styles -->
+  <style>
+    html, body, .container-fluid, .row { overflow-x: hidden; }
+    .table-responsive {
+      max-height: 450px;
+      overflow-y: auto;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      width: 100%;
+      display: block;
+    }
+    .table { width: 100%; table-layout: fixed; }
+    .table th {
+      white-space: nowrap;          /* keep header in one line */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      padding: 8px 6px !important;
+    }
+    .table td {
+      word-wrap: break-word;
+      white-space: normal;
+      padding: 6px 4px !important;
+    }
+
+    /* ---------- COLUMN WIDTHS (adjust as needed) ---------- */
+    .col-camera      { width: 9%;  }
+    .col-emp-id      { width: 9%;  }
+    .col-name        { width: 12%; }
+    .col-dept        { width: 12%; }
+    .col-event       { width: 10%; }
+    .col-location    { width: 12%; }
+    .col-timestamp   { width: 13%; }
+    .col-confidence  { width: 10%; }
+    .col-photo       { width: 13%; }
+
+    .main-content { position: relative; min-height: 100vh; padding-bottom: 130px; }
+    .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #d2dbe5 !important; min-height: 30px; padding: 5px 0; margin: 0; z-index: 1000; text-align: center; }
+    .footer p { font-size: 0.75rem; margin: 0; }
+    .filter-buttons { display: flex; gap: 10px; }
+    .content-wrapper { margin-top: 30px; }
+    .card-body { padding-bottom: 20px; }
+    .pagination-container {
+      position: sticky; bottom: 60px; background: #fff; padding: 10px; z-index: 999;
+      border-top: 1px solid #dee2e6; width: 100%; box-sizing: border-box;
+    }
+    .pagination { justify-content: center; margin: 0; flex-wrap: wrap; gap: 5px; }
+    .pagination .page-item { margin: 0 2px; flex: 0 0 auto; }
+    .pagination .page-link {
+      border: none; background: none; color: #007bff; padding: 5px 10px;
+      font-size: 0.9rem; line-height: 1.5;
+    }
+    .pagination .page-item.active .page-link { background-color: #007bff; color: white; border-radius: 3px; }
+    .pagination .page-item.disabled .page-link { color: #6c757d; pointer-events: none; }
+    .modal-content { border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
+    .modal-footer { border-top: none; padding-top: 0; }
+    .btn-primary { background-color: #007bff; border-color: #007bff; padding: 5px 20px; border-radius: 5px; }
+    .custom-pagination-info {
+      display: flex; justify-content: space-between; align-items: center; padding: 10px;
+      background-color: #f8f9fa; border-top: 1px solid #dee2e6; font-size: 0.875rem; color: #6c757d;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .custom-pagination-info select { padding: 2px 5px; font-size: 0.875rem; border: 1px solid #ced4da; border-radius: 4px; }
+    .col-md-1-5 { flex: 0 0 auto; width: 12.5%; padding-left: 20px; }
+    .form-control-sm, .form-select-sm { font-size: 0.9rem; padding: 6px 8px; height: 34px; }
+    .form-label { font-size: 0.85rem; margin-bottom: 3px; }
+    .filter-buttons .btn-sm { padding: 6px 12px; font-size: 0.9rem; }
+    .uniform-btn { width: 100%; height: 38px; display: flex; align-items: center; justify-content: center; padding: 0 10px; flex-grow: 1; }
+    @media (max-width: 768px) {
+      .pagination-container { bottom: 70px; }
+      .filter-buttons { flex-direction: column; align-items: stretch; }
+      .filter-buttons .btn { width: 100%; }
+      .main-content { padding-bottom: 180px; }
+      .footer { min-height: 50px; }
+      .col-md-1-5 { width: 50%; }
+      .col-md-3 { width: 100%; }
+    }
+    @media (max-width: 576px) {
+      .pagination-container { bottom: 80px; }
+      .filter-buttons .btn { font-size: 0.8rem; padding: 5px; }
+      .main-content { padding-bottom: 200px; }
+      .footer { min-height: 60px; }
+      .col-md-1-5 { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-2 p-0 position-fixed top-0 start-0 vh-100">
+        <div class="left-panel p-3 text-white">
+          <img src="../static/img/logo.png" alt="logo" width="100" height="100" class="mx-auto d-block mb-4">
+          <div id="menus">
+            <div class="menu-item"><i class="bi bi-speedometer2 me-2"></i> Live Dashboard</div>
+            <div class="menu-item"><i class="bi bi-people me-2"></i> Employee Logs</div>
+            <div class="menu-item active"><i class="bi bi-clock me-2"></i> Attendance Logs</div>
+            <div class="menu-item"><i class="bi bi-table me-2"></i> Attendance Dashboard</div>
+            <div class="menu-item"><i class="bi bi-people-fill me-2"></i> Crowd Detection</div>
+            <div class="menu-item"><i class="bi bi-credit-card me-2"></i> ID Card Compliance</div>
+            <div class="menu-item"><i class="bi bi-display me-2"></i> Unattended System</div>
+            <div class="menu-item"><i class="bi bi-moon-stars-fill me-2"></i> Sleep/Mealtime Detection</div>
+            <div class="menu-item"><i class="bi bi-geo-alt me-2"></i> GEO-Fence Intrusions</div>
+            <div class="menu-item"><i class="bi bi-exclamation-triangle me-2"></i> Alerts & Violations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-10 offset-lg-2 main-content">
+        <div id="topbar-placeholder"></div>
+        <div class="content-wrapper">
+          <div class="card shadow-sm mx-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0"><i class="bi bi-clock me-2"></i> Attendance Logs</h6>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-sm btn-outline-primary uniform-btn" id="todayFilter">Today</button>
+                <button class="btn btn-outline-primary btn-sm uniform-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-download"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" id="downloadCsv"><i class="bi bi-file-earmark-spreadsheet me-2"></i>CSV</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadExcel"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <!-- Filters -->
+              <form class="row g-3 align-items-end mb-4" id="filterForm">
+                <div class="col-md-1-5">
+                  <label for="filterEmployeeId" class="form-label small fw-bold">Employee ID</label>
+                  <input type="text" id="filterEmployeeId" class="form-control form-control-sm" placeholder="Enter ID">
+                </div>
+                <div class="col-md-1-5">
+                  <label for="filterEventType" class="form-label small fw-bold">Event Type</label>
+                  <select id="filterEventType" class="form-select form-select-sm">
+                    <option value="">All</option>
+                  </select>
+                </div>
+                <div class="col-md-1-5">
+                  <label for="filterDepartment" class="form-label small fw-bold">Department</label>
+                  <select id="filterDepartment" class="form-select form-select-sm">
+                    파일 <option value="">All</option>
+                  </select>
+                </div>
+                <div class="col-md-1-5">
+                  <label for="filterLocation" class="form-label small fw-bold">Location</label>
+                  <select id="filterLocation" class="form-select form-select-sm">
+                    <option value="">All</option>
+                  </select>
+                </div>
+                <div class="col-md-1-5">
+                  <label for="startDate" class="form-label small fw-bold">From</label>
+                  <input type="date" id="startDate" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-1-5">
+                  <label for="endDate" class="form-label small fw-bold">To</label>
+                  <input type="date" id="endDate" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-3 filter-buttons">
+                  <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="clearFilters">Clear</button>
+                </div>
+              </form>
+
+              <!-- Table with fixed column widths -->
+              <div class="table-responsive" id="tableWrapper">
+                <table class="table table-bordered table-hover mb-0" id="attendanceTable">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="col-camera"      title="Camera ID">Camera ID</th>
+                      <th class="col-emp-id"      title="Employee ID">Employee ID</th>
+                      <th class="col-name"        title="Name">Name</th>
+                      <th class="col-dept"        title="Department">Department</th>
+                      <th class="col-event"       title="Event Type">Event Type</th>
+                      <th class="col-location"    title="Location">Location</th>
+                      <th class="col-timestamp"   title="Timestamp">Timestamp</th>
+                      <th class="col-confidence"  title="Confidence">Confidence</th>
+                      <th class="col-photo"       title="Photo Available">Photo Available</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendanceBody">
+                    <tr><td colspan="9" class="text-center">Data is Loading. Please wait...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="custom-pagination-info" style="display:none;">
+                <span id="paginationInfo">Showing 1 - 10 of 0</span>
+                <div>
+                  <span>Rows per page:</span>
+                  <select id="rowsPerPage">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="all">All</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pagination-container" style="display:none;">
+                <nav id="pagination">
+                  <ul class="pagination"></ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-body">
+                <h5 id="errorTitle" class="mb-1"></h5>
+                <p id="errorMessage" class="mb-0"></p>
+              </div>
+              <div class="modal-footer justify-content-center border-0 pt-0">
+                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer text-center">
+          <hr class="border border-gray m-0">
+          <p class="text-muted small">TatvaOne.AI © 2025. All rights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../static/js/loadLayouts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    // --------------------------------------------------------------
+    //  GLOBALS
+    // --------------------------------------------------------------
+    const apiBase = 'https://t1-exam.temscbe.com:5004/api/logs';
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    let currentBlockIndex = 0;
+    const INVALID_EVENT_VALUES = new Set(['', null, 'null', 'N/A', 'NA', '-', '_']);
+
+    // --------------------------------------------------------------
+    //  UTILITIES
+    // --------------------------------------------------------------
+    function isInvalidEvent(val) {
+      if (val === undefined || val === null) return true;
+      const s = String(val).trim();
+      return s === '' || INVALID_EVENT_VALUES.has(s);
+    }
+
+    function showErrorModal(title, msg) {
+      document.getElementById('errorTitle').textContent = title;
+      document.getElementById('errorMessage').textContent = msg;
+      new bootstrap.Modal(document.getElementById('errorModal')).show();
+    }
+
+    function showLoading() {
+      const tbody = document.getElementById('attendanceBody');
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">Loading data, please wait...</td></tr>';
+      document.querySelector('.custom-pagination-info').style.display = 'none';
+      document.querySelector('.pagination-container').style.display = 'none';
+    }
+
+    // --------------------------------------------------------------
+    //  CHUNKED FETCH
+    // --------------------------------------------------------------
+    async function fetchLogsFromAPI(params = {}) {
+      const results = [];
+      let page = 1;
+      const per_page = 50;
+      let hasMore = true;
+
+      try {
+        while (hasMore) {
+          const url = new URL(apiBase);
+          url.searchParams.set('page', page);
+          url.searchParams.set('per_page', per_page);
+          if (params.employee_id) url.searchParams.set('employee_id', params.employee_id);
+          if (params.from_date) url.searchParams.set('from_date', params.from_date);
+          if (params.to_date)   url.searchParams.set('to_date',   params.to_date);
+          if (params.camera)    url.searchParams.set('camera',    params.camera);
+
+          const resp = await fetch(url);
+          if (!resp.ok) throw new Error('Server error ' + resp.status);
+          const json = await resp.json();
+
+          const chunk = Array.isArray(json.results) ? json.results : (json.data || []);
+          results.push(...chunk);
+
+          if (chunk.length < per_page) hasMore = false;
+          else page++;
+        }
+        return results;
+      } catch (err) {
+        console.error('fetch error', err);
+        showErrorModal('Fetch Error', 'Unable to fetch logs from server.');
+        return [];
+      }
+    }
+
+    // --------------------------------------------------------------
+    //  POPULATE DROPDOWNS
+    // --------------------------------------------------------------
+    function populateDropdowns(data) {
+      const events = [...new Set(data.map(r => (r.EventType ?? '').toString().trim())
+        .filter(v => v && !INVALID_EVENT_VALUES.has(v)))];
+      const depts = [...new Set(data.map(r => (r.Department ?? '').toString().trim()).filter(v => v))];
+      const locs  = [...new Set(data.map(r => (r.Location ?? '').toString().trim()).filter(v => v))];
+
+      const evSel = document.getElementById('filterEventType');
+      const depSel = document.getElementById('filterDepartment');
+      const locSel = document.getElementById('filterLocation');
+
+      evSel.innerHTML  = '<option value="">All</option>' + events.map(e => `<option value="${e}">${e}</option>`).join('');
+      depSel.innerHTML = '<option value="">All</option>' + depts.map(d => `<option value="${d}">${d}</option>`).join('');
+      locSel.innerHTML = '<option value="">All</option>' + locs.map(l => `<option value="${l}">${l}</option>`).join('');
+    }
+
+    // --------------------------------------------------------------
+    //  RENDER TABLE + PAGINATION
+    // --------------------------------------------------------------
+    function chunkArray(arr, size) {
+      const out = [];
+      for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+      return out;
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('attendanceBody');
+      const rpVal = document.getElementById('rowsPerPage').value;
+      const showAll = rpVal === 'all';
+      const rows = showAll ? (data.length || 1) : parseInt(rpVal, 10);
+      const pages = chunkArray(data, rows);
+      const totalPages = pages.length || 1;
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const currentChunk = showAll ? data : (pages[currentPage - 1] || []);
+
+      if (!currentChunk.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">No records found</td></tr>';
+        document.querySelector('.custom-pagination-info').style.display = 'none';
+        document.querySelector('.pagination-container').style.display = 'none';
+        return;
+      }
+
+      tbody.innerHTML = currentChunk.map(r => `
+        <tr>
+          <td>${r.CameraID ?? ''}</td>
+          <td>${r.EmployeeID ?? ''}</td>
+          <td>${r.Name ?? 'N/A'}</td>
+          <td>${r.Department ?? ''}</td>
+          <td>${r.EventType ?? ''}</td>
+          <td>${r.Location ?? ''}</td>
+          <td>${r.Timestamp ?? ''}</td>
+          <td>${r.Confidence ?? ''}</td>
+          <td>${r.PhotoAvailable ? 'Yes' : 'No'}</td>
+        </tr>
+      `).join('');
+
+      const totalItems = data.length;
+      if (showAll) {
+        document.querySelector('.custom-pagination-info').style.display = totalItems ? 'flex' : 'none';
+        document.getElementById('paginationInfo').textContent = totalItems ? `Showing 1 - ${totalItems} of ${totalItems}` : '';
+        document.querySelector('.pagination-container').style.display = 'none';
+      } else {
+        const start = (currentPage - 1) * rows + 1;
+        const end   = Math.min(currentPage * rows, totalItems);
+        document.querySelector('.custom-pagination-info').style.display = totalItems ? 'flex' : 'none';
+        document.getElementById('paginationInfo').textContent = totalItems ? `Showing ${start} - ${end} of ${totalItems}` : '';
+        document.querySelector('.pagination-container').style.display = totalItems > rows ? 'block' : 'none';
+        updatePagination(totalPages);
+      }
+    }
+
+    // --------------------------------------------------------------
+    //  PAGINATION (identical to employee_logs.html)
+    // --------------------------------------------------------------
+    function updatePagination(totalPages) {
+      const ul = document.querySelector('#pagination ul');
+      ul.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      const blockSize = 5;
+      const lastBlockStart = Math.max(1, totalPages - blockSize + 1);
+      const startPage = currentBlockIndex * blockSize + 1;
+      const endPage = Math.min(startPage + blockSize - 1, totalPages);
+
+      const prevLi = document.createElement('li');
+      prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+      prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+      prevLi.onclick = e => { e.preventDefault(); if (currentPage > 1) { currentPage--; if (currentPage < startPage) currentBlockIndex = Math.floor((currentPage-1)/blockSize); renderTable(filteredData); } };
+      ul.appendChild(prevLi);
+
+      const pagesArr = [];
+      if (totalPages <= blockSize) {
+        for (let i = 1; i <= totalPages; i++) pagesArr.push(i);
+      } else {
+        if (startPage > 1) pagesArr.push('...');
+        for (let i = startPage; i <= endPage; i++) pagesArr.push(i);
+        if (endPage < lastBlockStart - 1) pagesArr.push('...');
+        if (endPage < lastBlockStart) for (let i = lastBlockStart; i <= totalPages; i++) pagesArr.push(i);
+      }
+
+      pagesArr.forEach(p => {
+        if (p === '...') {
+          const li = document.createElement('li');
+          li.className = 'page-item disabled';
+          li.innerHTML = `<span class="page-link">...</span>`;
+          ul.appendChild(li);
+        } else {
+          const li = document.createElement('li');
+          li.className = `page-item ${p === currentPage ? 'active' : ''}`;
+          li.innerHTML = `<a class="page-link" href="#" data-page="${p}">${p}</a>`;
+          li.onclick = e => {
+            e.preventDefault();
+            const pageNum = p;
+            if (pageNum !== currentPage) {
+              if (pageNum % blockSize === 0 && pageNum < lastBlockStart) currentBlockIndex = Math.floor((pageNum-1)/blockSize);
+              currentPage = pageNum;
+              renderTable(filteredData);
+            }
+          };
+          ul.appendChild(li);
+        }
+      });
+
+      const nextLi = document.createElement('li');
+      nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+      nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+      nextLi.onclick = e => { e.preventDefault(); if (currentPage < totalPages) { currentPage++; if (currentPage > endPage && (currentBlockIndex+1)*blockSize < totalPages) currentBlockIndex++; renderTable(filteredData); } };
+      ul.appendChild(nextLi);
+    }
+
+    // --------------------------------------------------------------
+    //  APPLY FILTERS – EXACT DATE MATCHING
+    // --------------------------------------------------------------
+    function applyFilters() {
+      const empId   = document.getElementById('filterEmployeeId').value.trim().toLowerCase();
+      const evType  = document.getElementById('filterEventType').value;
+      const dept    = document.getElementById('filterDepartment').value;
+      const loc     = document.getElementById('filterLocation').value;
+      const from    = document.getElementById('startDate').value;
+      const to      = document.getElementById('endDate').value;
+
+      if (from && to && new Date(from) > new Date(to)) {
+        return showErrorModal('Invalid Date', '"From" cannot be after "To".');
+      }
+
+      filteredData = allData.filter(r => {
+        if (isInvalidEvent(r.EventType)) return false;
+
+        if (evType && String(r.EventType ?? '').trim() !== evType) return false;
+        if (dept && String(r.Department ?? '').trim() !== dept) return false;
+        if (loc && String(r.Location ?? '').trim() !== loc) return false;
+
+        if (empId) {
+          const idMatch = String(r.EmployeeID ?? '').toLowerCase().includes(empId);
+          const nameMatch = String(r.Name ?? '').toLowerCase().includes(empId);
+          if (!idMatch && !nameMatch) return false;
+        }
+
+        const ts = r.Timestamp;
+        if (!ts) return false;
+        const datePart = ts.split(' ')[0];
+        if (!datePart) return false;
+
+        if (from && datePart !== from) return false;
+        if (to && datePart !== to) return false;
+
+        return true;
+      });
+
+      populateDropdowns(allData);
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+    }
+
+    // --------------------------------------------------------------
+    //  EVENT LISTENERS
+    // --------------------------------------------------------------
+    document.getElementById('filterForm').onsubmit = e => { e.preventDefault(); applyFilters(); };
+
+    document.getElementById('todayFilter').onclick = () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('startDate').value = today;
+      document.getElementById('endDate').value = today;
+      applyFilters();
+    };
+
+    document.getElementById('clearFilters').onclick = () => {
+      document.getElementById('filterForm').reset();
+      document.getElementById('filterEmployeeId').value = '';
+      filteredData = allData.filter(r => !isInvalidEvent(r.EventType));
+      populateDropdowns(allData);
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+    };
+
+    document.getElementById('rowsPerPage').addEventListener('change', () => {
+      currentPage = 1;
+      currentBlockIndex = 0;
+      renderTable(filteredData);
+    });
+
+    // ---------- DOWNLOADS ----------
+    document.getElementById('downloadCsv').onclick = () => {
+      if (!filteredData.length) return showErrorModal('No Data', 'Nothing to download.');
+      const rows = [['Camera ID','Employee ID','Name','Department','Event Type','Location','Timestamp','Confidence','Photo Available']];
+      filteredData.forEach(r => rows.push([
+        r.CameraID ?? '', r.EmployeeID ?? '', r.Name ?? 'N/A',
+        r.Department ?? '', r.EventType ?? '', r.Location ?? '',
+        r.Timestamp ?? '', r.Confidence ?? '', r.PhotoAvailable ? 'Yes' : 'No'
+      ]));
+      const csv = 'data:text/csv;charset=utf-8,' + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const a = document.createElement('a'); a.href = encodeURI(csv); a.download = 'attendance_logs.csv'; a.click();
+    };
+
+    document.getElementById('downloadExcel').onclick = () => {
+      if (!filteredData.length) return showErrorModal('No Data', 'Nothing to download.');
+      const ws = XLSX.utils.aoa_to_sheet([
+        ['Camera ID','Employee ID','Name','Department','Event Type','Location','Timestamp','Confidence','Photo Available'],
+        ...filteredData.map(r => [
+          r.CameraID ?? '', r.EmployeeID ?? '', r.Name ?? 'N/A',
+          r.Department ?? '', r.EventType ?? '', r.Location ?? '',
+          r.Timestamp ?? '', r.Confidence ?? '', r.PhotoAvailable ? 'Yes' : 'No'
+        ])
+      ]);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+      XLSX.writeFile(wb, 'attendance_logs.xlsx');
+    };
+
+    // --------------------------------------------------------------
+    //  INITIAL LOAD
+    // --------------------------------------------------------------
+    showLoading();
+    (async () => {
+      allData = await fetchLogsFromAPI();
+      filteredData = allData.filter(r => !isInvalidEvent(r.EventType));
+      populateDropdowns(allData);
+      renderTable(filteredData);
+    })();
+  </script>
+</body>
+</html>
