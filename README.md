@@ -1,282 +1,169 @@
-🚀 NetricaAI — Real-Time CCTV Monitoring & Smart Attendance System
+🚀 NetricaAI – Intelligent CCTV Monitoring & Smart Attendance System
+<p align="center"> <img src="https://img.shields.io/badge/AI%20Powered-Computer%20Vision-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/Technology-Flask%20%7C%20FastAPI%20%7C%20Python-green?style=for-the-badge" /> <img src="https://img.shields.io/badge/Models-ArcFace%20%7C%20YOLOv8-orange?style=for-the-badge" /> </p>
+📌 Overview
 
-AI-powered facial recognition, crowd monitoring, posture detection, and automated attendance logging.
+NetricaAI is an advanced AI-powered CCTV Monitoring & Smart Attendance System designed to automate workforce attendance, enhance workplace security, and monitor environments in real time.
 
-This project provides an intelligent surveillance solution using real-time video analytics, deep learning, and computer vision models. NetricaAI integrates CCTV/RTSP camera streams with AI modules to deliver:
+The platform combines Computer Vision, Deep Learning, FastAPI/Flask services, and SQL Server, enabling:
 
-Live facial recognition
+✔ Real-time facial recognition
+✔ Automated Entry/Exit attendance
+✔ Crowd monitoring
+✔ Posture detection
+✔ Live CCTV streaming
+✔ Attendance & event dashboards
+✔ Employee face registration via Streamlit
 
-Liveness & posture analysis
+This system is ideal for corporate offices, universities, factories, and high-security environments.
 
-Automated Entry/Exit attendance
+✨ Key Features
+🔍 1. Real-Time Face Recognition
 
-Crowd detection & alerts
+YOLOv8 for face detection
 
-Historical logs and dashboards
+ArcFace ONNX for high-accuracy embedding
 
-Streamlit tools for employee face registration
+Liveness & alignment using MediaPipe
 
-🧠 Why NetricaAI is an AI Project
+⏱ 2. Smart Attendance Automation
 
-The system performs real-time intelligent understanding of CCTV footage using:
+Entry/Exit detection based on camera configuration
 
-YOLOv8 – Face detection
+No biometric machines required
 
-ArcFace – Face embeddings & recognition
+Accurate logs stored in SQL Server
 
-MediaPipe – Pose & face landmark alignment
+🧍 3. Posture Analysis
 
-Crowd behavior analysis
+Standing / Sitting classification
 
-Anomaly & pattern tracking
+Useful for monitoring staff behavior
 
-Cosine similarity for identity matching
+👥 4. Crowd Detection
 
-This makes the system truly AI-driven, not just a video monitoring tool.
+Detect groups (3+ people) inside ROI
 
-🎯 Business Objectives
+Automatic snapshot & DB logging
 
-Automate attendance without physical biometric devices
+Crowd duration tracking
 
-Provide real-time security insights
-
-Detect crowds or unusual movement
-
-Centralize surveillance and logging
-
-Enable HR/Admin to track attendance & crowd events
-
-👥 Stakeholders
-
-HR – Attendance reports & workforce analytics
-
-Admin/Security – Real-time monitoring
-
-IT/Infra – Network/CCTV management
-
-Data/Analytics Team – Insights & trends
-
-🛠️ Tech Stack
-Backend
-
-Python 3.10+
-
-Flask / FastAPI
-
-OpenCV, MediaPipe, FFmpeg
-
-YOLOv8 (Ultralytics)
-
-ArcFace (ONNX Runtime)
-
-SQL Server (pyodbc)
-
-ThreadPoolExecutor
-
-Frontend
-
-HTML / CSS / JS (Jinja templates)
-
-Streamlit (Employee Registration)
-
-Tools
-
-Docker
-
-Git / Git Bash
-
-SSMS
-
-VLC, Postman
-
-📦 Folder Structure
-/ (repo root)
-│
-├── models/                     # ArcFace, YOLO weights
-├── captured_faces/             # Captured face snapshots
-├── captured_crowds/            # Crowd snapshots
-├── output_logs/                # Log CSVs per camera
-├── templates/                  # HTML dashboards
-├── static/                     # CSS, JS
-├── utils/
-│   ├── arcface_embedder.py
-│   ├── db_handler.py
-│
-├── cctv_app.py                 # Main Flask application
-├── face_register.py            # Streamlit registration
-├── process_employee.py         # Bulk upload script
-├── camera_locations.json       # Camera metadata
-├── requirements.txt
-└── .env                        # Environment configuration
-
-🔄 End-to-End System Workflow
-
-Employee Registration
-
-Streamlit captures image
-
-Detect face → ArcFace embedding
-
-Save to SQL Server
-
-Live CCTV Streaming
-
-FFmpeg pulls RTSP frames
-
-YOLOv8 detects faces
-
-MediaPipe aligns face
-
-ArcFace embedding → Recognition
-
-Attendance Logic
-
-Identify Entry / Exit camera
-
-Infer event & insert logs
-
-Save face snapshots
-
-Crowd Detection
-
-ROI selection
-
-Detect groups ≥ 3
-
-Save snapshots, push logs
-
-Dashboards
-
-Live view
+📊 5. Dashboards & Logs
 
 Attendance logs
 
-Crowd detection logs
+Employee-specific history
 
-Attendance summary
+Crowd detection dashboard
 
-✨ Key Features
-🔹 Real-Time Face Recognition
+Live camera monitoring
 
-ArcFace embedding
+📸 6. Streamlit Registration App
 
-Cosine similarity identity matching
+Register employees via webcam or photo upload
 
-Multi-camera support
+Automatically generate embeddings
 
-🔹 Smart Attendance Automation
+🏗️ System Architecture
+RTSP CCTV Cameras ──▶ FFmpeg Stream Pulling
+        │
+        ▼
+YOLOv8 Face Detection ──▶ MediaPipe (Alignment)
+        │
+        ▼
+ArcFace Embedding ──▶ Identity Matching
+        │
+        ▼
+Attendance Logic (Entry/Exit)
+        │
+        ├──▶ SQL Server (Employees, AttendanceLogs, CrowdLogs)
+        └──▶ Live Stream Overlay (Flask/FastAPI)
 
-Entry/Exit inference
+📂 Project Structure
+/NetricaAI
+│
+├── cctv_app.py                # Main Flask backend
+├── face_register.py           # Streamlit employee registration
+├── process_employee.py        # Bulk employee upload
+│
+├── models/                    # ArcFace & YOLO models
+├── templates/                 # HTML dashboards
+├── static/                    # CSS & JS
+├── utils/                     # Embedding + DB utils
+├── captured_faces/            # Saved recognized faces
+├── captured_crowds/           # Crowd snapshots
+├── output_logs/               # CSV logs
+│
+├── camera_locations.json      # Camera config
+├── requirements.txt
+└── .env
 
-No manual biometric device needed
-
-Fast SQL logging
-
-Avoids false exits
-
-🔹 Crowd Detection & Alerts
-
-Proximity-based grouping
-
-Static vs. moving crowd classification
-
-Snapshots & DB logs
-
-🔹 Posture Detection
-
-Standing / Sitting detection using MediaPipe Pose
-
-🔹 Live Video Streaming
-
-/api/video_feed/<camera_id>
-
-MJPEG format
-
-Overlays for face, FPS, posture, ROI
-
-🔹 Streamlit Employee Registration
-
-Webcam capture
-
-Image upload
-
-Live face embedding
-
-🔧 Installation Guide
-1️⃣ Clone the Repository
-git clone https://github.com/YourUsername/NetricaAI.git
+⚙️ Installation Guide
+1️⃣ Clone the Repo
+git clone https://github.com/YourRepo/NetricaAI.git
 cd NetricaAI
 
-2️⃣ Create Virtual Environment
+2️⃣ Setup Virtual Environment
 python -m venv env
 env\Scripts\activate
 
-3️⃣ Install Dependencies
+3️⃣ Install Requirements
 pip install -r requirements.txt
 
-4️⃣ Install FFmpeg (required for RTSP)
+4️⃣ Setup Environment Variables
 
-Download: https://ffmpeg.org/download.html
-
-Add to PATH → verify:
-
-ffmpeg -version
-
-5️⃣ Configure .env
-
-Example:
+Create a .env file:
 
 DB_DRIVER=ODBC Driver 18 for SQL Server
-DB_SERVER=103.117.172.65
-DB_NAME=Netrica
-DB_USERNAME=sa
-DB_PASSWORD=*****
+DB_SERVER=xxx.xxx.xxx.xxx
+DB_NAME=NetricaAI
+DB_USERNAME=xxxx
+DB_PASSWORD=xxxx
+
 RTSP_USER=DataMonitor
 RTSP_PASSWORD=D@taMon1tor
 
-6️⃣ Run the Flask App
+5️⃣ Install FFmpeg
+
+Required for RTSP stream decoding:
+https://ffmpeg.org/download.html
+
+6️⃣ Run Application
 python cctv_app.py
 
 
-Local URL:
+➡️ Local dashboard:
 http://127.0.0.1:5004/
 
-🧪 API Endpoints
-🎥 Camera Control
+🔌 Important API Endpoints
+🎥 Camera Streaming
 Endpoint	Description
-POST /api/start/<camera_id>	Start a camera stream
-POST /api/stop/<camera_id>	Stop a camera
-POST /api/start_all	Start all cameras
-POST /api/stop_all	Stop all cameras
-GET /api/status	Camera health
-GET /api/video_feed/<id>	Live MJPEG feed
-📌 Logs & Attendance
-Endpoint	Description
-GET /api/logs	Paginated attendance logs
-GET /attendance-summary	First Entry / Last Exit per employee
-GET /crowd-detection	All crowd events
-🎯 ROI Management
-Endpoint	Description
-POST /api/set_roi/<camera_id>	Set ROI for crowd detection
-POST /api/reset_roi/<camera_id>	Clear ROI
-🖼️ System Architecture Diagram
+/api/video_feed/<camera_id>	Live stream with overlays
+/api/start_all	Start all cameras
+/api/stop_all	Stop all cameras
+📒 Logs
+Endpoint	Purpose
+/api/logs	Attendance logs
+/crowd-detection	Crowd events
+/attendance-summary	First/Last entry per employee
+🖼️ Screenshots
 
-(Include your SVG here)
+(Add when available)
+✔ Dashboard
+✔ Attendance log
+✔ Live stream with overlays
+✔ Crowd detection
+✔ Employee registration
 
-Netrica_flow_diagram.svg
+🚀 Future Enhancements
 
-📌 Future Enhancements
+ID Card compliance monitoring
 
-Guard availability detection
+Mobile phone detection
 
-Mobile usage detection
+Virtual fencing
 
-Meal monitoring
+Meal/sleep detection
 
-Virtual geofencing
+Guard availability insights
 
-ID card compliance
-
-Worker-hour analytics
-
-Auto-grouping improvements
+Controller-based camera switching
