@@ -145,25 +145,7 @@ Endpoint	Purpose
 /api/logs	Attendance logs
 /crowd-detection	Crowd events
 /attendance-summary	First/Last entry per employee
-🖼️ Screenshots
+🖼️ Flow of project
 
-(Add when available)
-✔ Dashboard
-✔ Attendance log
-✔ Live stream with overlays
-✔ Crowd detection
-✔ Employee registration
+https://github.com/PythonMLClub/NetricaAI_CCTV-Monitoring-and-Smart-Attendance-System-/blob/main/Netrica_flow_diagram.svg
 
-🚀 Future Enhancements
-
-ID Card compliance monitoring
-
-Mobile phone detection
-
-Virtual fencing
-
-Meal/sleep detection
-
-Guard availability insights
-
-Controller-based camera switching
