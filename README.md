@@ -178,9 +178,13 @@ python cctv_app.py
 ### 🎥 Camera Operations
 
 POST - /api/start/<camera_id> - Start camera stream
+
 POST - /api/stop/<camera_id> - Stop camera stream
+
 POST - /api/start_all - Start all cameras
+
 POST - /api/stop_all - Stop all cameras
+
 GET - /api/status - Camera health
 
 ### 📸 Live Video Streaming
@@ -190,15 +194,22 @@ GET - /api/status - Camera health
 ### 📒 Logs & Attendance
 
 | GET | /api/logs | Attendance logs |
+
 | GET | /crowd-detection | Crowd events |
+
 | GET | /attendance-summary | Daily entry–exit summary |
+
 
 ## 🖼️ 6. Screenshot Previews
 
 📍 Dashboard
+
 🎥 Live Stream
+
 👥 Crowd Detection
+
 🧍 Posture Detection
+
 🧑‍💼 Employee Registration
 
 ## 🚀 7. Future Enhancements
