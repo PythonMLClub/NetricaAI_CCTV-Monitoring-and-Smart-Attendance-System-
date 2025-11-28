@@ -1,14 +1,22 @@
 🚀 NetricaAI – Intelligent CCTV Monitoring & Smart Attendance System
 <p align="center"> <img src="https://img.shields.io/badge/AI%20Powered-Computer%20Vision-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/Framework-Flask%20%7C%20FastAPI-green?style=for-the-badge" /> <img src="https://img.shields.io/badge/Models-ArcFace%20%7C%20YOLOv8-orange?style=for-the-badge" /> <img src="https://img.shields.io/badge/Database-SQL%20Server-red?style=for-the-badge" /> </p>
 
-### NetricaAI is an advanced AI-driven CCTV Monitoring & Smart Attendance System built for enterprises, universities, and high-security environments It automates:
+### NetricaAI is an advanced AI-driven CCTV Monitoring & Smart Attendance System built for enterprises, universities, and high-security environments It automates.
+### 📌 Overview
 
-Workforce attendance
-Real-time facial recognition
-Crowd detection
-Posture monitoring
-Live CCTV streaming
-Alerts & analytics
+NetricaAI is an advanced AI-powered CCTV Monitoring & Smart Attendance System designed to automate workforce attendance, enhance workplace security, and monitor environments in real time.
+
+The platform combines Computer Vision, Deep Learning, FastAPI/Flask services, and SQL Server, enabling:
+
+✔ Real-time facial recognition
+✔ Automated Entry/Exit attendance
+✔ Crowd monitoring
+✔ Posture detection
+✔ Live CCTV streaming
+✔ Attendance & event dashboards
+✔ Employee face registration via Streamlit
+
+This system is ideal for corporate offices, universities, factories, and high-security environments.
 
 The system uses Deep Learning + Computer Vision for intelligent, real-time understanding of CCTV feeds.
 
