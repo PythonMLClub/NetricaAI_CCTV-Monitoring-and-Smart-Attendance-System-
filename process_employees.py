@@ -59,28 +59,28 @@ def detect_and_extract_face(image):
     try:
         # Convert to grayscale for face detection
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
+
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(100, 100))
-        
+
         if len(faces) == 0:
             return None, "No face detected in the image"
-        
+
         # Get the largest face
         largest_face = max(faces, key=lambda x: x[2] * x[3])
         x, y, w, h = largest_face
-        
+
         # Add some padding around the face
         padding = int(0.2 * min(w, h))
         x = max(0, x - padding)
         y = max(0, y - padding)
         w = min(image.shape[1] - x, w + 2 * padding)
         h = min(image.shape[0] - y, h + 2 * padding)
-        
+
         # Extract face region
         face_region = image[y:y+h, x:x+w]
         return face_region, "Face detected successfully"
-        
+
     except Exception as e:
         return None, f"Face detection error: {e}"
 
@@ -96,7 +96,7 @@ def process_images(employees):
                     print(f"Skipping existing employee with emp_id: {emp_id}")
                     log_file.write(f"Skipped existing employee - emp_id: {emp_id}\n")
                     continue
-                
+
                 # Look for image matching the EmpCode case-insensitively
                 image_path = None
                 for ext in supported_extensions:
@@ -108,24 +108,24 @@ def process_images(employees):
                             break
                     if image_path:
                         break
-                
+
                 if not image_path:
                     log_path = os.path.join(IMG_DIR, f"[inc/INC/Inc]{emp_id}.*")
                     print(f"Image not found for emp_id: {emp_id}")
                     log_file.write(f"Image not found for emp_id: {emp_id} at {log_path}\n")
                     continue
-                
+
                 # Read and process image
                 image = cv2.imread(image_path)
                 if image is None:
                     print(f"Failed to load image for emp_id: {emp_id} at {image_path}")
                     log_file.write(f"Failed to load image for emp_id: {emp_id} at {image_path}\n")
                     continue
-                
+
                 # Resize image to a standard size to reduce binary data size
                 # resizing before detection can make faces harder to find if they get too small.
                 image = cv2.resize(image, (112, 112), interpolation=cv2.INTER_LINEAR)
-                
+
                 # Detect and extract face
                 # the cropped face image.
                 face_region, face_message = detect_and_extract_face(image)
@@ -133,9 +133,9 @@ def process_images(employees):
                     print(f"Face detection failed for emp_id: {emp_id}: {face_message}")
                     log_file.write(f"Face detection failed for emp_id: {emp_id}: {face_message}\n")
                     continue
-                
+
                 print(f"Face detection for emp_id {emp_id}: {face_message}")
-                
+
                 # Generate embedding
                 # Feeds the cropped face into the ArcFace ONNX model.
                 # The model produces a 512-dimensional vector (like [0.121, -0.093, 0.542, …]).
@@ -145,12 +145,12 @@ def process_images(employees):
                     print(f"Failed to generate embedding for emp_id: {emp_id}")
                     log_file.write(f"Failed to generate embedding for emp_id: {emp_id} at {image_path}\n")
                     continue
-                
+
                 # Convert embedding and image to bytes
                 embedding_bytes = embedding.astype(np.float32).tobytes()
                 image_bytes = cv2.imencode('.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 85])[1].tobytes()
                 print(f"Image bytes size: {len(image_bytes)} bytes, Embedding bytes size: {len(embedding_bytes)} bytes")
-                
+
                 # Validate binary data size
                 if len(image_bytes) > 2**31:
                     print(f"Image size too large for emp_id: {emp_id} ({len(image_bytes)} bytes)")
@@ -160,11 +160,11 @@ def process_images(employees):
                     print(f"Embedding size too large for emp_id: {emp_id} ({len(embedding_bytes)} bytes)")
                     log_file.write(f"Embedding size too large for emp_id: {emp_id} ({len(embedding_bytes)} bytes)\n")
                     continue
-                
+
                 # Use the exact shift time from CSV
                 shift_time = details['shift_time']
                 print(f"Using shift_time for emp_id {emp_id}: {shift_time}")
-                
+
                 # Save to database
                 emp_id_int = int(emp_id)
                 success, message = insert_employee(
@@ -178,7 +178,7 @@ def process_images(employees):
                 )
                 print(f"Employee {emp_id}: {message}")
                 log_file.write(f"Employee {emp_id}: {message}\n")
-                
+
             except Exception as e:
                 print(f"Error processing employee {emp_id}: {e}")
                 log_file.write(f"Error processing employee {emp_id}: {e}\n")
@@ -187,7 +187,7 @@ def process_images(employees):
 if __name__ == "__main__":
     # Path to CSV file (adjust as needed)
     csv_path = os.path.join(BASE_DIR, "employeeReport1759986085.csv")
-    
+
     if not os.path.exists(csv_path):
         print(f"CSV file not found at: {csv_path}")
         with open(LOG_FILE, 'a') as log_file:
