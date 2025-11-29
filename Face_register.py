@@ -62,13 +62,12 @@ def detect_and_extract_face(image):
         
         # Convert to grayscale for face detection
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, 1.1, 4, minSize=(100, 100))
-        
+
         if len(faces) == 0:
             return None, "No face detected in the image"
-        
+    
         # Get the largest face
         largest_face = max(faces, key=lambda x: x[2] * x[3])
         x, y, w, h = largest_face
