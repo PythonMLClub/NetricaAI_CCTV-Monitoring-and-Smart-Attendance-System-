@@ -179,7 +179,6 @@ def get_db_connection():
     except Exception as e:
         app_logger.error(f"Database connection failed: {e}")
         raise
-    
 
 def get_all_embeddings():
     logger = logging.getLogger(__name__)
